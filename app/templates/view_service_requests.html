@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Service Requests</title>
+    <!-- You can include any other meta tags, CSS, or JS libraries here -->
+</head>
+<body>
+
+    {% extends 'service_dashboard.html' %}
+
+    {% block content %}
+        <div class="container">
+            <h2 class="service-title">Requests for Service: {{ service.title }}</h2>
+            
+            {% if service_requests %}
+                <ul class="service-requests-list">
+                    {% for request in service_requests %}
+                        <li class="service-request-item">
+                            <div class="service-request-info">
+                                <p><strong>Username:</strong> 
+                                    <a href="{{ url_for('routes.user_profile', user_id=request.seeker.id) }}">
+                                        {{ request.seeker.username }}
+                                    </a>
+                                <p><strong>Message:</strong> {{ request.message }}</p>
+                                <p><strong>Status:</strong> {{ request.status }}</p>
+                                <p><strong>Requested Date:</strong> {{ request.requested_date }}</p>
+                            </div>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>No service requests yet for this service.</p>
+            {% endif %}
+        </div>
+    {% endblock %}
+    
+
+{% block styles %}
+    <style>
+        .container {
+            width: 80%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+        }
+
+        .service-title {
+            font-size: 2em;
+            font-weight: bold;
+            color: #222;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .service-requests-list {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .service-request-item {
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            padding: 20px;
+        }
+
+        .service-request-info p {
+            font-size: 1.1em;
+            color: #555;
+            line-height: 1.5;
+        }
+
+        .service-request-info strong {
+            color: #333;
+        }
+    </style>
+{% endblock %}
+
+</body>
+</html>

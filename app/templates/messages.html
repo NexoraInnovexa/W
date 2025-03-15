@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Messages</title>
+</head>
+<body>
+    <h1>Messages</h1>
+    <ul>
+        {% for message in messages %}
+        <li>
+            <strong>{{ 'From' if message.receiver_id == current_user.id else 'To' }}:</strong> 
+            {{ message.sender.username if message.receiver_id == current_user.id else message.receiver.username }}
+            <p>{{ message.content }}</p>
+            <small>{{ message.timestamp }}</small>
+        </li>
+        {% endfor %}
+    </ul>
+    <h2>Send a Message</h2>
+    <form id="send-message-form">
+        <label>To:</label>
+        <input type="number" name="receiver_id" required>
+        <label>Message:</label>
+        <textarea name="content" required></textarea>
+        <button type="submit">Send</button>
+    </form>
+    <script>
+        document.getElementById('send-message-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const data = Object.fromEntries(formData.entries());
+
+            const response = await fetch('/messages/send', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+
+            if (response.ok) {
+                alert('Message sent!');
+                location.reload();
+            } else {
+                alert('Error sending message.');
+            }
+        });
+    </script>
+</body>
+</html>

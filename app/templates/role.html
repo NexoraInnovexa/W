@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register Role</title>
+    <style>
+        /* General Body Styling */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #000;
+            margin: 0;
+            padding: 0;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        /* Main container with side spaces */
+        .main-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            max-width: 1200px;
+        }
+
+        /* Side images */
+        .side-image {
+            width: 25%;
+            height: auto;
+            background-color: #111;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+
+        .side-image img {
+            max-width: 100%;
+            border-radius: 10px;
+        }
+
+        /* Form Container */
+        .container {
+            width: 50%;
+            padding: 30px;
+            background-color: #111;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(255, 0, 0, 0.5);
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        /* Header Styling */
+        h1 {
+            text-align: center;
+            color: red;
+            font-size: 28px;
+            margin-bottom: 20px;
+        }
+
+        /* Form Styling */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            font-size: 16px;
+            color: white;
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        .form-group input, .form-group textarea, .form-group select {
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+            border: 2px solid red;
+            background-color: #222;
+            color: white;
+            border-radius: 8px;
+            box-sizing: border-box;
+            transition: border-color 0.3s ease-in-out;
+        }
+
+        /* Change border color on focus */
+        .form-group input:focus, .form-group textarea:focus, .form-group select:focus {
+            border-color: white;
+            outline: none;
+        }
+
+        /* Error and Success messages */
+        .error, .success {
+            font-size: 14px;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .error {
+            color: red;
+        }
+
+        .success {
+            color: #2ecc71;
+        }
+
+        /* Button Styling */
+        .form-group button {
+            width: 100%;
+            padding: 14px;
+            font-size: 16px;
+            background-color: red;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .form-group button:hover {
+            background-color: #b30000;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .main-container {
+                flex-direction: column;
+            }
+
+            .side-image {
+                display: none;
+            }
+
+            .container {
+                width: 90%;
+            }
+        }
+
+        /* Animation for the container */
+        @keyframes fadeIn {
+            0% {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Show/Hide sections for specific roles */
+        .role-section {
+            display: none;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <!-- Left Image Space -->
+        <div class="side-image">
+            <img src="/static/Business-Idea.png" alt="Left Side Image">
+        </div>
+
+        <!-- Form Container -->
+        <div class="container">
+            <h1>Register Your Role</h1>
+
+            <!-- Error and Success messages -->
+            <div class="error" id="error-message"></div>
+            <div class="success" id="success-message"></div>
+
+            <!-- Role Selection Form -->
+            <form id="role-form">
+                <div class="form-group">
+                    <label for="role">Select Role</label>
+                    <select id="role" required>
+                        <option value="">-- Select Role --</option>
+                        <option value="investor">Investor</option>
+                        <option value="cofounder">Cofounder</option>
+                        <option value="startup">Startup</option>
+                    </select>
+                </div>
+            
+                <!-- Name Field (Common for all roles) -->
+                <div class="form-group">
+                    <label for="full_names">Full Name</label>
+                    <input type="text" id="full_names" placeholder="Enter your full name" required>
+                </div>
+            
+                <!-- Occupation Field (Common for all roles) -->
+                <div class="form-group">
+                    <label for="occupation">Occupation</label>
+                    <input type="text" id="occupation" placeholder="Enter your occupation" required>
+                </div>
+            
+                <!-- Email Field (Common for all roles) -->
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" placeholder="Enter your email" required>
+                </div>
+            
+                <!-- Investor Preferences -->
+                <div class="form-group role-section" id="investor-preferences">
+                    <label for="preferences">Investor Preferences</label>
+                    <textarea id="preferences" placeholder="What are you looking for in a startup?" rows="4"></textarea>
+                </div>
+            
+                <!-- Cofounder Preferences -->
+                <div class="form-group role-section" id="cofounder-preferences">
+                    <label for="cofounder-preferences">Cofounder Preferences</label>
+                    <textarea id="cofounder-preferences" placeholder="What are you looking for in a cofounder?" rows="4"></textarea>
+                </div>
+            
+                <!-- Startup Idea -->
+                <div class="form-group role-section" id="startup-idea">
+                    <label for="idea">Startup Idea</label>
+                    <textarea id="idea" placeholder="Describe your startup idea" rows="4"></textarea>
+                </div>
+            
+                <!-- Country Field (Common for all roles) -->
+                <div class="form-group">
+                    <label for="country">Country</label>
+                    <input type="text" id="country" placeholder="Enter your country" required>
+                </div>
+            
+                <!-- Submit Button -->
+                <div class="form-group">
+                    <button type="submit">Register</button>
+                </div>
+            </form>
+            
+        </div>
+
+        <!-- Right Image Space -->
+        <div class="side-image">
+            <img src="/static/funding.jpg" alt="Right Side Image">
+        </div>
+    </div>
+
+    <script>
+        const roleSelect = document.getElementById('role');
+        const investorPreferencesContainer = document.getElementById('investor-preferences');
+        const cofounderPreferencesContainer = document.getElementById('cofounder-preferences');
+        const startupIdeaContainer = document.getElementById('startup-idea');
+        const countryInput = document.getElementById('country');
+        const errorMessage = document.getElementById('error-message');
+        const successMessage = document.getElementById('success-message');
+
+        // Show/Hide preferences or idea fields based on selected role
+        roleSelect.addEventListener('change', () => {
+            const role = roleSelect.value;
+
+            // Hide all sections initially
+            investorPreferencesContainer.style.display = 'none';
+            cofounderPreferencesContainer.style.display = 'none';
+            startupIdeaContainer.style.display = 'none';
+
+            // Show sections based on the role
+            if (role === 'investor') {
+                investorPreferencesContainer.style.display = 'block';
+            } else if (role === 'cofounder') {
+                cofounderPreferencesContainer.style.display = 'block';
+            } else if (role === 'startup') {
+                startupIdeaContainer.style.display = 'block';
+            }
+        });
+
+        // Handle form submission
+        document.getElementById('role-form').addEventListener('submit', function (event) {
+            event.preventDefault();
+
+            const role = roleSelect.value;
+            const full_names = document.getElementById('full_names').value;
+            const occupation = document.getElementById('occupation').value;
+            const email = document.getElementById('email').value;
+            const country = countryInput.value;
+            let preferences = '';
+            let idea = '';
+
+            if (role === 'investor') {
+                preferences = document.getElementById('preferences').value;
+            } else if (role === 'cofounder') {
+                preferences = document.getElementById('cofounder-preferences').value;
+            } else if (role === 'startup') {
+                idea = document.getElementById('idea').value;
+            }
+
+            // Create data object to send
+            const formData = {
+                role,
+                full_names,
+                occupation,
+                email,
+                country,
+                preferences,
+                idea
+            };
+
+            // Send POST request (replace with appropriate backend API endpoint)
+            fetch('/register-role', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    errorMessage.textContent = data.error;
+                    successMessage.textContent = '';
+                } else {
+                    successMessage.textContent = data.message;
+                    errorMessage.textContent = '';
+                    document.getElementById('role-form').reset();
+                }
+            })
+            .catch(error => {
+                errorMessage.textContent = 'An error occurred';
+                successMessage.textContent = '';
+            });
+        });
+    </script>
+</body>
+</html>

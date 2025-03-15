@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ event.title }} - Event Details</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <style>
+        /* General Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #000;  /* Black background for contrast */
+            color: #333;  /* Dark text for readability */
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            text-align: center;
+            padding: 20px;
+        }
+
+        /* Container for the content, white background with scrolling */
+        .content-container {
+            background-color: #fff;  /* White background for content */
+            width: 70%;  /* Central layout width */
+            max-width: 1000px;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            overflow-y: auto; /* Scrollable effect */
+            height: calc(100vh - 40px);
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            color: #ff3b3f;  /* Red color for the title */
+            margin-bottom: 20px;
+        }
+
+        p {
+            font-size: 1.2rem;
+            color: #666;
+            margin: 10px 0;
+        }
+
+        a {
+            display: inline-block;
+            padding: 12px 20px;
+            font-size: 1.2rem;
+            background-color: #ff3b3f;  /* Red button */
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-top: 30px;
+            transition: background-color 0.3s ease;
+        }
+
+        a:hover {
+            background-color: #d32f2f;  /* Darker red on hover */
+        }
+
+        /* Create Event Icon (Fixed) */
+        .create-event-icon {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #28a745;  /* Green */
+            color: #fff;
+            padding: 15px;
+            border-radius: 50%;
+            font-size: 2rem;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+
+        .create-event-icon:hover {
+            background-color: #218838; /* Darker green */
+            transform: scale(1.1);  /* Scale effect */
+        }
+
+        .create-event-icon:focus {
+            outline: none;
+        }
+
+        .create-event-text {
+            margin-left: 8px;
+            font-size: 1rem;
+        }
+
+        /* Mobile Responsiveness */
+        @media (max-width: 768px) {
+            .content-container {
+                width: 90%;  /* More width on mobile */
+                height: auto;  /* Allow content to resize on small screens */
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            p {
+                font-size: 1rem;
+            }
+
+            a {
+                width: 100%;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Create Event Icon at the bottom right -->
+    <a href="{{ url_for('routes.all_events') }}" class="create-event-icon">
+        <i class="fa fa-plus-circle"></i> <!-- Plus Icon -->
+        <span class="create-event-text">Events</span> <!-- Text to clarify -->
+    </a>
+
+    <!-- Content Container for Event Details -->
+    <div class="content-container">
+        <h1>{{ event.title }}</h1>
+        <p>{{ event.description }}</p>
+        <p>Date: {{ event.date }}</p>
+        <p>Location: {{ event.location }}</p>
+
+        <a href="{{ url_for('routes.book_event', event_id=event.id) }}">Book Now</a>
+        <h3>Bookings</h3>
+        <ul>
+        {% for booking in bookings %}
+                <li>Username: {{ booking.user.username }} - Booking Date: {{ booking.booking_date }} - Special Notes: {{ booking.special_notes }}</li>
+        {% endfor %}
+        </ul>
+
+    </div>
+
+</body>
+</html>

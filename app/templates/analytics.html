@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analytics Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <style>
+        /* General Styles */
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 0;
+            display: flex;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 250px;
+            height: 100vh;
+            background-color: #343a40;
+            color: white;
+            padding-top: 20px;
+            position: fixed;
+        }
+
+        .sidebar h2 {
+            text-align: center;
+            color: #dc3545;
+            margin-bottom: 30px;
+        }
+
+        .sidebar ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .sidebar ul li {
+            padding: 15px;
+            text-align: center;
+            border-bottom: 1px solid #444;
+        }
+
+        .sidebar ul li a {
+            color: white;
+            text-decoration: none;
+            display: block;
+        }
+
+        .sidebar ul li:hover {
+            background-color: #dc3545;
+            transition: background-color 0.3s;
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: 250px;
+            padding: 20px;
+            width: calc(100% - 250px);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 30px;
+        }
+
+        .stat-box {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            flex: 1;
+            margin: 0 10px;
+            transition: transform 0.3s ease;
+        }
+
+        .stat-box:hover {
+            transform: translateY(-10px);
+        }
+
+        .stat-box h3 {
+            font-size: 24px;
+            color: #343a40;
+        }
+
+        .stat-box p {
+            font-size: 18px;
+            margin-top: 10px;
+            color: #555;
+        }
+
+        /* Chart */
+        canvas {
+            margin: 0 auto;
+            display: block;
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <h2>Analyics</h2>
+        <ul>
+            <li><a href="{{ url_for('routes.dashboard') }}">W</a></li>
+            <li><a href="{{ url_for('routes.create_product') }}">Create Product</a></li>
+            <li><a href="{{ url_for('routes.marketplace') }}">Marketplace</a></li>
+            <li><a href="{{ url_for('routes.view_orders') }}">View Orders</a></li>
+            <li><a href="{{ url_for('routes.all_products') }}">Manage My Products</a></li>
+            <li><a href="{{ url_for('routes.analytics') }}">Analytics</a></li>
+            
+        </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="header">
+            <h1>Analytics Dashboard</h1>
+        </div>
+
+        <!-- Statistics Section -->
+        <div class="stats">
+            <div class="stat-box">
+                <h3>Total Orders</h3>
+                <p>{{ total_orders }}</p>
+            </div>
+            <div class="stat-box">
+                <h3>Successful Deliveries</h3>
+                <p>{{ successful_deliveries }}</p>
+            </div>
+            <div class="stat-box">
+                <h3>Total Product Visits</h3>
+                <p>{{ product_visits }}</p>
+            </div>
+        </div>
+
+        <!-- Monthly Orders Chart -->
+        <h2>Monthly Orders</h2>
+        <canvas id="monthlyOrdersChart" width="400" height="200"></canvas>
+    </div>
+
+    <script>
+        // Prepare data for monthly orders chart
+        const monthlyData = {{ monthly_orders | tojson }};
+        const labels = Object.keys(monthlyData).map(month => {
+            const date = new Date(0, month - 1); // Month is 0-indexed
+            return date.toLocaleString('default', { month: 'long' });
+        });
+        const data = Object.values(monthlyData);
+
+        // Render chart
+        const ctx = document.getElementById('monthlyOrdersChart').getContext('2d');
+        const chart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Orders',
+                    data: data,
+                    borderColor: '#dc3545',
+                    backgroundColor: 'rgba(220, 53, 69, 0.1)',
+                    tension: 0.4,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'Monthly Orders Trend'
+                    },
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Month'
+                        }
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'Number of Orders'
+                        },
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    </script>
+
+</body>
+</html>

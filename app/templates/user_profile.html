@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ user.username }}'s Profile</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f8fa;
+            display: flex;
+            justify-content: center;
+        }
+        .container {
+            display: flex;
+            max-width: 1200px;
+            width: 100%;
+            margin: 20px;
+        }
+        .sidebar {
+            width: 20%;
+            padding: 10px;
+        }
+        .sidebar h2 {
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+        }
+        .main-content {
+            width: 60%;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .banner {
+            height: 200px;
+            background-color: #1da1f2;
+            background-image: url('{{ user.banner_image }}');
+            background-size: cover;
+            background-position: center;
+        }
+        .profile-header {
+            padding: 20px;
+            position: relative;
+        }
+        .profile-header img {
+            border-radius: 50%;
+            width: 100px;
+            height: 100px;
+            border: 4px solid #fff;
+            position: absolute;
+            top: -50px;
+            left: 20px;
+        }
+        .user-details {
+            margin-left: 140px;
+            margin-top: 20px;
+        }
+        .user-details h1 {
+            font-size: 1.5rem;
+            color: #14171a;
+        }
+        .user-details p {
+            color: #657786;
+        }
+        .profile-actions {
+            position: relative;
+            margin-top: 20px;
+            padding-left: 20px;
+        }
+        .profile-actions button,
+        .profile-actions a {
+            margin-left: 10px;
+            padding: 8px 15px;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .follow-btn {
+            background-color: #1da1f2;
+            color: #fff;
+        }
+        .unfollow-btn {
+            background-color: #e0245e;
+            color: #fff;
+        }
+        .more-actions {
+            background-color: #e1e8ed;
+            color: #14171a;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .posts {
+            padding: 20px;
+        }
+        .post {
+            padding: 10px;
+            border-bottom: 1px solid #e1e8ed;
+        }
+        .post:last-child {
+            border-bottom: none;
+        }
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            right: 0;
+            background-color: #fff;
+            box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+            padding: 10px;
+            z-index: 1;
+            border-radius: 8px;
+        }
+        .dropdown-content button {
+            display: block;
+            width: 100%;
+            padding: 8px;
+            border: none;
+            background: none;
+            text-align: left;
+            cursor: pointer;
+            color: #14171a;
+        }
+        .dropdown-content button:hover {
+            background-color: #f5f8fa;
+        }
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        .menu {
+            width: 70%;
+            background-color: #ffffff;
+            border-right: 1px solid #ddd;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            overflow-y: auto;
+        }
+
+        .menu button {
+            background-color: transparent;  /* No background */
+            color: black; /* Text color black */
+            border: none;
+            border-radius: 5px;
+            padding: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .menu button:hover {
+            background-color: darkred;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Left Sidebar -->
+        <div class="sidebar">
+            <div class="menu">
+                <button><i class="fa fa-home"></i> Home</button>
+                <a href="{{ url_for('routes.explore') }}">
+                    <button><i class="fa fa-compass"></i> Explore</button>
+                </a>
+                <button><i class="fa fa-bell"></i> Notifications</button>
+                <button><i class="fa fa-envelope"></i> Messages</button>
+                <a href="{{ url_for('routes.marketplace') }}">
+                   <button><i class="fa fa-store"></i> Marketplace</button>
+                </a>   
+                <a href="{{ url_for('routes.edit_profile') }}">
+                    <button><i class="fa fa-user"></i> Profile</button>
+                </a>
+                <button><i class="fa fa-bullhorn"></i> Ads</button>
+                <button><i class="fa fa-crown"></i> Premium</button>
+                <button><i class="fa fa-paint-brush"></i> Artistries</button>
+                <button><i class="fa fa-chart-line"></i> Analytics</button>
+                <button><i class="fa fa-users"></i> Groups</button>
+                <button><i class="fa fa-paw"></i> Pets</button>
+                <button><i class="fa fa-cogs"></i> Settings</button>
+                <a href="{{ url_for('routes.all_events') }}">
+                    <button><i class="fa fa-calendar-alt"></i>Events</button>
+                </a>
+                <button id="job-dashboard-btn"><i class="fa fa-briefcase"></i> Jobs & Services</button>   
+                <button><i class="fa fa-plus-circle"></i> Create Post</button>
+                <div id="job-dashboard-content" style="display:none;">
+                    <!-- Content will be inserted here -->
+                </div>
+            </div>
+            
+    
+        </div>
+
+        <!-- Main Content -->
+                     <!-- Main Content -->
+<div class="main-content">
+    <!-- Banner -->
+    <div class="banner"></div>
+
+    <!-- Profile Header -->
+    <div class="profile-header">
+        <img src="{{ user.profile_picture }}" alt="{{ user.username }}'s profile picture">
+        <div class="user-details">
+            <h1>
+                {{ user.username }}
+                {% if user.blue_tick %}
+                    <i class="fa fa-check-circle" style="color: #1da1f2;" title="Verified"></i>
+                {% endif %}
+            </h1>
+            <p>{{ user.bio }}</p>
+        </div>
+    </div>
+
+    <!-- Profile Actions (Follow/Unfollow) -->
+    <div class="profile-actions" style="margin-top: 20px; padding-left: 20px;">
+        {% if current_user != user %}
+            <!-- Follow/Unfollow -->
+            {% if is_following %}
+                <form action="{{ url_for('routes.unfollow', user_id=user.id) }}" method="POST">
+                    <button type="submit" class="unfollow-btn">Unfollow</button>
+                </form>
+            {% else %}
+                <form action="{{ url_for('routes.follow_user', user_id=user.id) }}" method="POST">
+                    <button type="submit" class="follow-btn">Follow</button>
+                </form>
+            {% endif %}
+            
+            <!-- Message -->
+            <a href="{{ url_for('routes.messages', recipient_id=user.id) }}" class="follow-btn">Message</a>
+
+            <!-- More Actions Dropdown -->
+            <div class="dropdown">
+                <button class="more-actions">More</button>
+                <div class="dropdown-content">
+                    <form action="{{ url_for('routes.block_user', user_id=user.id) }}" method="POST">
+                        <button type="submit">Block</button>
+                    </form>
+                    <form action="{{ url_for('routes.report_user', user_id=user.id) }}" method="POST">
+                        <button type="submit">Report</button>
+                    </form>
+                    <a href="#">Share Profile</a>
+                </div>
+            </div>
+        {% else %}
+            <p>This is your profile!</p>
+        {% endif %}
+    </div>
+
+ 
+
+            <!-- Posts Section -->
+            <div class="posts">
+                {% for post in posts %}
+                    <div class="post">
+                        <a href="{{ url_for('routes.user_profile', user_id=post.user.id) }}">
+                            {{ post.user.username }}
+                            <p>{{ post.content }}</p>
+                        </a>
+                        <div class="content">{{ post.content }}</div>
+                        <div class="tags">
+                            <strong>Tags:</strong>
+                            <ul>
+                                {% for tag in post.tags %}
+                                    <li>{{ tag.name }}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                        <div class="actions">
+                            <i class="fa fa-thumbs-up" title="Like" onclick="likePost({{ post.id }})"></i>
+                            <i class="fa fa-comment" title="Comment" onclick="toggleCommentBox({{ post.id }})"></i>
+                            <i class="fa fa-share" title="Share" onclick="sharePost({{ post.id }})"></i>
+                        </div>
+                        <div class="post-box-actions comment-box" id="comment-box-{{ post.id }}" style="display: none;">
+                            <textarea placeholder="Add a comment..." rows="2"></textarea><br>
+                            <button onclick="submitComment({{ post.id }})">Post Comment</button>
+                        </div>
+                        <div class="message-icon">
+                            <i class="fas fa-comment-alt"></i> 
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+
+        <!-- Right Sidebar -->
+        <div class="sidebar">
+            <h2>Trending</h2>
+            <ul>
+                {% for topic in trending_topics %}
+                    <li>#{{ topic }}</li>
+                {% endfor %}
+            </ul>
+
+            <h2>Who to Follow</h2>
+            <ul>
+                {% for suggested_user in suggested_users %}
+                    <li>
+                        <div class="user-card">
+                            <img src="{{ url_for('static', filename=suggested_user.profile_picture) }}" alt="{{ suggested_user.username }}'s profile picture">
+                            <span>{{ suggested_user.username }}</span>
+                            <button onclick="followUser({{ suggested_user.id }})">Follow</button>
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</body>
+</html>

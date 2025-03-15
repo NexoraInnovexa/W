@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Business Idea Market Survey</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            width: 50%;
+            margin: 50px auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            font-size: 24px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            font-size: 16px;
+            display: block;
+            margin-bottom: 5px;
+        }
+        .form-group input, .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+        .form-group button {
+            width: 100%;
+            padding: 12px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        .form-group button:hover {
+            background-color: #0056b3;
+        }
+        .result {
+            display: none;
+            margin-top: 30px;
+            text-align: center;
+        }
+        .result h3 {
+            font-size: 22px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Business Idea Market Survey</h1>
+
+        <!-- Survey Form -->
+        <form id="business-idea-form">
+            <div class="form-group">
+                <label for="idea">Describe Your Business Idea</label>
+                <textarea id="idea" placeholder="Enter your business idea" rows="4" required></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="industry">What industry is your business in?</label>
+                <input type="text" id="industry" placeholder="e.g., Technology, Healthcare, etc." required>
+            </div>
+
+            <div class="form-group">
+                <label for="target-market">What is your target market?</label>
+                <input type="text" id="target-market" placeholder="e.g., young professionals, small businesses, etc." required>
+            </div>
+
+            <div class="form-group">
+                <label for="competition">Who are your competitors or what similar businesses exist in the market?</label>
+                <input type="text" id="competition" placeholder="e.g., Company A, Company B" required>
+            </div>
+
+            <div class="form-group">
+                <button type="submit">Analyze My Idea</button>
+            </div>
+        </form>
+
+        <!-- Survey Result -->
+        <div class="result" id="result">
+            <h3>Your Business Idea Analysis</h3>
+            <p id="success-prediction"></p>
+            <p id="market-opportunity"></p>
+            <p id="pitfalls"></p>
+            <p id="strengths"></p>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('business-idea-form').addEventListener('submit', async function(event) {
+            event.preventDefault();
+            
+            const idea = document.getElementById('idea').value;
+            const industry = document.getElementById('industry').value;
+            const targetMarket = document.getElementById('target-market').value;
+            const competition = document.getElementById('competition').value;
+        
+            const data = { idea, industry, targetMarket, competition };
+        
+            // Send data to the backend for analysis
+            try {
+                const response = await fetch('/predict-idea', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+        
+                const result = await response.json();
+                if (response.ok) {
+                    displayResult(result);
+                } else {
+                    alert(result.error || 'Something went wrong.');
+                }
+            } catch (error) {
+                alert('Error occurred: ' + error.message);
+            }
+        });
+        
+        // Function to display results
+        function displayResult(result) {
+            document.getElementById('result').style.display = 'block';
+            document.getElementById('success-prediction').textContent = result.success ? 'Your business idea is likely to succeed in the current market.' : 'Your business idea may face challenges in the current market.';
+            document.getElementById('market-opportunity').textContent = 'Market Opportunity: ' + result.marketOpportunity;
+            document.getElementById('pitfalls').textContent = 'Potential Pitfalls: ' + result.pitfalls.join(', ');
+            document.getElementById('strengths').textContent = 'Strengths: ' + result.strengths.join(', ');
+            document.getElementById('competitor-analysis').textContent = 'Competitor Analysis: ' + result.competitorAnalysis;
+        }
+        
+    </script>
+
+</body>
+</html>

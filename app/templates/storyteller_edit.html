@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Story</title>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Edit Story</h1>
+        <form id="edit-story-form">
+            <input type="hidden" id="story_id" name="story_id" value="{{ story.id }}">
+            
+            <label for="title">Title:</label>
+            <input type="text" id="title" name="title" value="{{ story.title }}" required>
+
+            <label for="content">Content (200 words max per post):</label>
+            <textarea id="content" name="content" maxlength="1200" required>{{ story.content }}</textarea>
+
+            <label for="image">Upload Image (Optional):</label>
+            <input type="file" id="image" name="image">
+
+            <button type="submit">Update</button>
+        </form>
+        <a href="/storyteller/dashboard">Back to Dashboard</a>
+    </div>
+
+    <script>
+        document.getElementById('edit-story-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+
+            const response = await fetch(`/story/edit/${formData.get('story_id')}`, {
+                method: 'POST',
+                body: formData
+            });
+
+            const result = await response.json();
+            if (result.success) {
+                alert('Story updated successfully!');
+                window.location.href = '/storyteller/dashboard';
+            } else {
+                alert(result.error || 'Error updating story.');
+            }
+        });
+    </script>
+</body>
+</html>

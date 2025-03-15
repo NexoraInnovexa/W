@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Available Services</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* General styles */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .container {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Navbar styles */
+        .navbar {
+            background-color: #fff;
+            color: #000;
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #ddd;
+        }
+        .navbar .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: black;
+        }
+        .nav-links {
+            list-style: none;
+            display: flex;
+            gap: 15px;
+        }
+        .nav-links a {
+            color: black;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .nav-links a:hover {
+            color: #d32f2f;
+        }
+
+        /* Layout styles */
+        .dashboard-layout {
+            display: flex;
+            flex: 1;
+            gap: 20px;
+            padding: 20px;
+        }
+        .sidebar, .right-sidebar {
+            width: 220px;
+            background-color: #ffffff;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .sidebar h3, .right-sidebar h3 {
+            color: #d32f2f;
+            margin-bottom: 10px;
+        }
+        .sidebar ul, .right-sidebar ul {
+            list-style: none;
+            padding: 0;
+        }
+        .sidebar ul li, .right-sidebar ul li {
+            margin-bottom: 10px;
+        }
+        .sidebar ul li a, .right-sidebar ul li a {
+            text-decoration: none;
+            color: #333;
+            padding: 8px;
+            border-radius: 5px;
+            display: block;
+        }
+        .sidebar ul li a:hover, .right-sidebar ul li a:hover {
+            background-color: #fbe9e7;
+            color: #d32f2f;
+        }
+
+        /* Main content styles */
+        .main-content {
+            flex: 1;
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .main-content h2 {
+            color: #d32f2f;
+            margin-bottom: 15px;
+        }
+        .main-content form {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .main-content form input[type="text"] {
+            flex: 1;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .main-content form button {
+            background-color: #d32f2f;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .main-content form button:hover {
+            background-color: #b71c1c;
+        }
+        .service-card {
+            background: #ffffff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        .service-card h3 {
+            color: #333;
+            margin-bottom: 5px;
+        }
+        .service-card p {
+            color: #555;
+        }
+        .service-card a {
+            color: #007bff;
+            text-decoration: none;
+        }
+        .service-card a:hover {
+            text-decoration: underline;
+        }
+
+        /* Advert Banner */
+        .advert-banner {
+            width: 100%;
+            background-color: #ff9800;
+            color: white;
+            text-align: center;
+            padding: 15px;
+            font-size: 1.5rem;
+            font-weight: bold;
+            position: fixed;
+            top: 60px;  /* Adjusted to hang below the navbar */
+            left: 0;
+            z-index: 999;
+            animation: swing 2s ease-in-out infinite;
+            transform-origin: top center; /* Set the swinging point */
+        }
+
+        /* Swing animation for advert */
+        @keyframes swing {
+            0% { transform: rotate(0deg); }
+            25% { transform: rotate(5deg); }
+            50% { transform: rotate(0deg); }
+            75% { transform: rotate(-5deg); }
+            100% { transform: rotate(0deg); }
+        }
+
+        /* Footer */
+        .footer {
+            background-color: #000;
+            color: #fff;
+            text-align: center;
+            padding: 10px;
+        }
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #ff5733;
+            min-width: 160px;
+            z-index: 1;
+            padding: 12px;
+            border-radius: 5px;
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        .dropdown-content a {
+            color: white;
+            text-decoration: none;
+            display: block;
+            padding: 8px 12px;
+            font-size: 1.2rem;
+        }
+
+        .dropdown-content a:hover {
+            background-color: #e04e29;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Advert Banner -->
+        <div class="advert-banner">
+            Special Offer: Get 10% off on all services this month!
+        </div>
+
+        <!-- Navbar -->
+        <nav class="navbar">
+            <a href="{{ url_for('routes.dashboard') }}" class="logo">W</a>
+            <ul class="nav-links">
+                <li><a href="{{ url_for('routes.job_dashboard') }}"><i class="fas fa-briefcase"></i> See All</a></li>
+                <li><a href="{{ url_for('routes.view_jobs') }}"><i class="fas fa-briefcase"></i> View Jobs</a></li>
+                <li><a href="{{ url_for('routes.view_services') }}"><i class="fas fa-tools"></i> View Services</a></li>
+                <li><a href="{{ url_for('routes.post_job') }}"><i class="fas fa-plus"></i> Post Job</a></li>
+                <li><a href="{{ url_for('routes.post_service') }}"><i class="fas fa-plus-circle"></i> Post Service</a></li>
+                <li><a href="{{ url_for('routes.logout') }}"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+            </ul>
+            <div class="nav-search">
+                <input type="text" placeholder="Search..." style="padding: 5px; border-radius: 5px;">
+                <a href="#"><i class="fas fa-search"></i></a>
+            </div>
+            <div class="dropdown">
+                <a href="#"><i class="fas fa-calendar-alt"></i></a>
+                <div class="dropdown-content">
+                    <a href="{{ url_for('routes.create_event') }}">Create Event</a>
+                    <a href="{{ url_for('routes.all_events') }}">View Events</a>
+                </div>
+            </div>
+        
+        </nav>
+
+        <!-- Dashboard Layout -->
+        <div class="dashboard-layout">
+            <!-- Left Sidebar -->
+            <div class="sidebar">
+                <h3>Menu</h3>
+                <ul>
+                    <li><a href="{{ url_for('routes.view_jobs') }}"><i class="fas fa-briefcase"></i> Jobs</a></li>
+                    <li><a href="{{ url_for('routes.view_services') }}"><i class="fas fa-tools"></i> Services</a></li>
+                    <li><a href="{{ url_for('routes.view_service_requests') }}"><i class="fas fa-envelope"></i> Service Requests</a></li>
+                </ul>
+            </div>
+
+            <!-- Main Content -->
+            <div class="container">
+                <h2>Available Services</h2>
+        
+                <form method="POST" action="{{ url_for('routes.view_services') }}">
+                    {% for service in services %}
+                        <div class="service-item">
+                            <h3>{{ service.title }}</h3>
+                            <p>{{ service.description }}</p>
+                            <button type="submit" name="service_id" value="{{ service.id }}">View Service</button>
+                        </div>
+                    {% endfor %}
+                </form>
+          
+                <ul>
+                    {% for service in services %}
+                        <li class="service-card">
+                            <h3>{{ service.title }}</h3>
+                            <p>{{ service.description }}</p>
+                            <p>Price: ${{ service.price }}</p>
+                            <p>Tags: {{ service.tags }}</p>
+                            <a href="{{ url_for('routes.request_service', service_id=service.id) }}">Request Service</a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+            <!-- Right Sidebar -->
+            <div class="right-sidebar">
+                <h3>Trending</h3>
+                <ul>
+                    {% for trend in trending_items %}
+                        <li><a href="#"><i class="fas fa-fire"></i> {{ trend.name }} ({{ trend.count }})</a></li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer">
+            &copy; 2024 Service Dashboard. All Rights Reserved.
+        </footer>
+    </div>
+</body>
+</html>

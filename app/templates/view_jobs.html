@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Jobs</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* General styles */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .container {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Navbar styles */
+        .navbar {
+            background-color: #d32f2f;
+            color: #fff;
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .navbar .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: white;
+        }
+        .nav-links {
+            list-style: none;
+            display: flex;
+            gap: 15px;
+        }
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .nav-links a:hover {
+            color: #b71c1c;
+        }
+
+        /* Layout styles */
+        .dashboard-layout {
+            display: flex;
+            flex: 1;
+            gap: 20px;
+            padding: 20px;
+        }
+        .sidebar, .right-sidebar {
+            width: 220px;
+            background-color: #ffffff;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .sidebar h3, .right-sidebar h3 {
+            color: #d32f2f;
+            margin-bottom: 10px;
+        }
+        .sidebar ul, .right-sidebar ul {
+            list-style: none;
+            padding: 0;
+        }
+        .sidebar ul li, .right-sidebar ul li {
+            margin-bottom: 10px;
+        }
+        .sidebar ul li a, .right-sidebar ul li a {
+            text-decoration: none;
+            color: #333;
+            padding: 8px;
+            border-radius: 5px;
+            display: block;
+        }
+        .sidebar ul li a:hover, .right-sidebar ul li a:hover {
+            background-color: #fbe9e7;
+            color: #d32f2f;
+        }
+
+        /* Main content styles */
+        .main-content {
+            flex: 1;
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .main-content h2 {
+            color: #d32f2f;
+            margin-bottom: 15px;
+        }
+        .main-content form {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .main-content form input[type="text"] {
+            flex: 1;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .main-content form button {
+            background-color: #d32f2f;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .main-content form button:hover {
+            background-color: #b71c1c;
+        }
+        .job-card {
+            background: #ffffff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        .job-card h3 {
+            color: #333;
+            margin-bottom: 5px;
+        }
+        .job-card p {
+            color: #555;
+        }
+        .job-card a {
+            color: #007bff;
+            text-decoration: none;
+        }
+        .job-card a:hover {
+            text-decoration: underline;
+        }
+
+        /* Footer */
+        .footer {
+            background-color: #000;
+            color: #fff;
+            text-align: center;
+            padding: 10px;
+        }
+        .nav-links, .nav-icons {
+            list-style: none;
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+        .nav-links a, .nav-icons a {
+            color: white;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .nav-links a:hover, .nav-icons a:hover {
+            color: #b71c1c;
+        }
+         .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #ff5733;
+            min-width: 160px;
+            z-index: 1;
+            padding: 12px;
+            border-radius: 5px;
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        .dropdown-content a {
+            color: white;
+            text-decoration: none;
+            display: block;
+            padding: 8px 12px;
+            font-size: 1.2rem;
+        }
+
+        .dropdown-content a:hover {
+            background-color: #e04e29;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Navbar -->
+        <nav class="navbar">
+            <a href="{{ url_for('routes.dashboard') }}" class="logo">W</a>
+            <ul class="nav-links">
+                <li><a href="{{ url_for('routes.job_dashboard') }}"><i class="fas fa-briefcase"></i> Job Dashboard</a></li>
+                <li><a href="{{ url_for('routes.view_jobs') }}"><i class="fas fa-briefcase"></i> View Jobs</a></li>
+                <li><a href="{{ url_for('routes.view_services') }}"><i class="fas fa-tools"></i> View Services</a></li>
+                <li><a href="{{ url_for('routes.post_job') }}"><i class="fas fa-plus"></i> Post Job</a></li>
+                <li><a href="{{ url_for('routes.post_service') }}"><i class="fas fa-plus-circle"></i> Post Service</a></li>
+                <li><a href="{{ url_for('routes.logout') }}"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+            </ul>
+            <div class="nav-icons">
+                <a href="#"><i class="fas fa-bell"></i></a>
+                <div class="dropdown">
+                    <a href="#"><i class="fas fa-calendar-alt"></i></a>
+                    <div class="dropdown-content">
+                        <a href="{{ url_for('routes.create_event') }}">Create Event</a>
+                        <a href="{{ url_for('routes.all_events') }}">View Events</a>
+
+                    </div>
+                </div>
+            
+            </div>
+        </nav>
+
+        <!-- Dashboard Layout -->
+        <div class="dashboard-layout">
+            <!-- Left Sidebar -->
+            <div class="sidebar">
+                <h3>Menu</h3>
+                <ul>
+                    <li><a href="{{ url_for('routes.view_jobs') }}"><i class="fas fa-briefcase"></i> Jobs</a></li>
+                    <li><a href="{{ url_for('routes.view_services') }}"><i class="fas fa-tools"></i> Services</a></li>
+                    <li><a href="{{ url_for('routes.view_service_requests') }}"><i class="fas fa-envelope"></i> Service Requests</a></li>
+                </ul>
+                <div class="advert">
+                    <h4>Advert</h4>
+                    <img src="{{ url_for('static', filename='images/advert1.jpg') }}" alt="Advert 1" style="width: 100%; border-radius: 5px;">
+                </div>
+            </div>
+
+                                 
+                              
+
+            <!-- Main Content -->
+            
+                 <!-- Inside your main-content div or wherever you want to display trending jobs/services -->
+            <div class="main-content">
+                        <h2>Available Jobs</h2>
+                        <form method="GET">
+                            <input type="text" name="search" placeholder="Search jobs">
+                            <button type="submit">Search</button>
+                        </form>
+
+            {% for job in jobs %}
+            <div class="job-card">
+                    <h3>{{ job.title }}</h3>
+                    <p>{{ job.description }}</p>
+                    <a href="{{ url_for('routes.apply_job', job_id=job.id) }}">Apply Now</a>
+                </div>
+                {% endfor %}
+            </div>
+
+            <!-- Right Sidebar -->
+            <div class="right-sidebar">
+                <h3>Trending</h3>
+                <ul>
+                    {% for trend in trending_items %}
+                    <li><a href="#"><i class="fas fa-fire"></i> {{ trend.name }} ({{ trend.count }})</a></li>
+                    {% endfor %}
+                </ul>
+
+                <!-- Inside your main-content div or wherever you want to display trending jobs/services -->
+
+
+    
+
+    <h3>Trending Jobs</h2>
+    {% for job in trending_jobs %}
+    <div class="job-card">
+        <h3>{{ job.title }}</h3>
+        <p>{{ job.description }}</p>
+        <a href="{{ url_for('routes.apply_job', job_id=job.id) }}">Apply Now</a>
+    </div>
+    {% endfor %}
+
+    <h3>Trending Services</h2>
+    {% for service in trending_services %}
+    <div class="service-card">
+        <h3>{{ service.title }}</h3>
+        <p>{{ service.description }}</p>
+    </div>
+    {% endfor %}
+</div>
+
+            </div>
+
+
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer">
+            &copy; 2024 Job Dashboard. All Rights Reserved.
+        </footer>
+    </div>
+</body>
+</html>

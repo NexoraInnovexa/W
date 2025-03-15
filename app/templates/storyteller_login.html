@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Storyteller Login</title>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background-color: #1e003e;
+            color: #f4f4f4;
+            text-align: center;
+            padding: 20px;
+        }
+        .login-form {
+            max-width: 400px;
+            margin: 100px auto;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.7);
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 1.2rem;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            font-size: 1rem;
+            border-radius: 5px;
+            border: none;
+            background: rgba(255, 255, 255, 0.8);
+            margin-bottom: 20px;
+        }
+        input[type="submit"] {
+            background: linear-gradient(45deg, #ff006e, #8338ec);
+            color: #fff;
+            padding: 10px 20px;
+            font-size: 1.2rem;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        input[type="submit"]:hover {
+            background: linear-gradient(45deg, #8338ec, #ff006e);
+        }
+    </style>
+</head>
+<body>
+    <h1>Storyteller Login</h1>
+    <p>Log in with your Pen Name to access your dashboard.</p>
+
+    <form action="/storyteller/login" method="POST" class="login-form">
+        <label for="pen_name">Pen Name</label>
+        <input type="text" id="pen_name" name="pen_name" placeholder="Enter your Pen Name" required>
+        <input type="submit" value="Log In">
+    </form>
+</body>
+</html>

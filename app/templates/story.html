@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Storyland</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* General Styling */
+body {
+    margin: 0;
+    font-family: 'Quicksand', sans-serif;
+    color: #f4f4f4;
+    overflow-x: hidden;
+}
+
+/* Background Animation */
+.background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #1e1e2f, #4a148c);
+    overflow: hidden;
+    z-index: -1;
+}
+
+.clouds {
+    position: absolute;
+    top: 10%;
+    width: 200%;
+    height: 100px;
+    background: url('clouds.png') repeat-x;
+    animation: moveClouds 30s linear infinite;
+    opacity: 0.6;
+}
+
+@keyframes moveClouds {
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        transform: translateX(-50%);
+    }
+}
+
+.stars {
+    position: absolute;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle, #ffffff 1px, transparent 1px);
+    background-size: 3px 3px;
+    animation: twinkle 4s infinite;
+}
+
+@keyframes twinkle {
+    0%, 100% {
+        opacity: 0.8;
+    }
+    50% {
+        opacity: 0.5;
+    }
+}
+
+/* Header */
+.header {
+    text-align: center;
+    padding: 30px;
+    background: rgba(74, 20, 140, 0.9);
+    border-bottom: 3px solid #ffb400;
+}
+
+.animated-title {
+    font-family: 'Cinzel', serif;
+    font-size: 3.5rem;
+    color: #ffb400;
+    animation: glowTitle 3s infinite alternate;
+}
+
+@keyframes glowTitle {
+    from {
+        text-shadow: 0 0 10px #ffb400, 0 0 20px #ffb400;
+    }
+    to {
+        text-shadow: 0 0 30px #ffb400, 0 0 60px #ffb400;
+    }
+}
+
+nav {
+    margin-top: 15px;
+}
+
+nav a {
+    text-decoration: none;
+    color: #f4f4f4;
+    margin: 0 15px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    transition: color 0.3s;
+}
+
+nav a:hover {
+    color: #ffb400;
+}
+@media screen and (max-width: 768px) {
+    .stories {
+        grid-template-columns: repeat(2, 1fr); /* Adjusts to 2 columns on medium screens */
+    }
+}
+/* Stories Section */
+.stories {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* Ensures 4 columns per row */
+    gap: 20px;
+    padding: 50px;
+    animation: fadeIn 2s ease-in-out;
+}
+
+@media screen and (max-width: 480px) {
+    .stories {
+        grid-template-columns: 1fr; /* Adjusts to 1 column on small screens */
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.story-card {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+    border: 2px solid #ffb400;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.story-card:hover {
+    transform: scale(1.1);
+    box-shadow: 0 10px 25px rgba(255, 255, 0, 0.5);
+}
+
+.card-content {
+    padding: 20px;
+}
+
+.story-title {
+    font-family: 'Cinzel', serif;
+    font-size: 1.5rem;
+    color: #000000; /* Title in black */
+    margin-bottom: 10px;
+    animation: float 3s infinite alternate;
+
+}
+
+.story-preview {
+    color: #000000; /* Text-preview in black for readability */
+}
+
+@keyframes float {
+    from {
+        transform: translateY(0);
+    }
+    to {
+        transform: translateY(-10px);
+    }
+}
+
+.read-more-btn {
+    display: inline-block;
+    padding: 10px 15px;
+    color: #1e1e2f;
+    background: #ffb400;
+    border-radius: 5px;
+    font-weight: bold;
+    text-transform: uppercase;
+    transition: background 0.3s;
+}
+
+.read-more-btn:hover {
+    background: #00d4ff;
+    color: #fff;
+}
+
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="title-container">
+            <h1 class="animated-title">Storyland</h1>
+        </div>
+        <nav class="animated-nav">
+            <a href="/">Home</a>
+            <a href="/storyteller/register">Become a Storyteller</a>
+        </nav>
+    </header>
+
+    <main>
+        <section class="stories">
+            {% for story in stories %}
+            <div class="story-card">
+                <div class="card-content">
+                    <h2 class="story-title">{{ story.title }}</h2>
+        
+                    {% if story.image_url %}
+                    <img src="{{ url_for('static', filename='uploads/' + story.image_url) }}" alt="{{ story.title }}" class="story-image">
+                    {% endif %}
+        
+                    <div id="story-container-{{ story.id }}" data-full-content="{{ story.content }}">
+                        <!-- Show the initial preview (for example, 100 words) -->
+                        {% set initial_content = story.content.split(' ')[:100] | join(' ') %}
+                        <p class="story-preview" id="story-content-{{ story.id }}">
+                            {{ initial_content }}...
+                        </p>
+        
+                        <!-- Read More Link -->
+                        <a href="#" id="read-more-{{ story.id }}" class="read-more-link" onclick="loadMoreContent({{ story.id }})">Read More</a>
+        
+                        <!-- Continue Reading Button (hidden initially) -->
+                        <button id="continue-btn-{{ story.id }}" onclick="payForNextChunk({{ story.id }})" style="display: none;">
+                            Continue Reading - ₦{{ 500 }}
+                        </button>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </section>
+    </main>
+
+    <footer class="footer">
+        <p>&copy; 2024 Storyland. All Rights Reserved.</p>
+    </footer>
+
+    <script>
+
+        let contentChunks = {};
+
+        // Fetch additional content dynamically when "Read More" is clicked
+        function loadMoreContent(storyId) {
+            const storyContent = document.getElementById(`story-content-${storyId}`);
+            const readMoreLink = document.getElementById(`read-more-${storyId}`);
+            const continueBtn = document.getElementById(`continue-btn-${storyId}`);
+        
+            if (!contentChunks[storyId]) {
+                contentChunks[storyId] = { wordsRead: 100, fullContent: '' };
+                // Retrieve the full content from the data attribute
+                contentChunks[storyId].fullContent = document.querySelector(`#story-container-${storyId}`).dataset.fullContent;
+            }
+        
+            let wordsRead = contentChunks[storyId].wordsRead;
+        
+            // Show the next chunk of the story
+            let nextContent = contentChunks[storyId].fullContent.split(' ').slice(wordsRead, wordsRead + 100).join(' ');
+        
+            // Append the new chunk of content
+            storyContent.textContent += ' ' + nextContent;
+        
+            wordsRead += 100;
+            contentChunks[storyId].wordsRead = wordsRead;
+        
+            // If 200 words have been read, show the "Continue Reading" button
+            if (wordsRead >= 200) {
+                continueBtn.style.display = 'block';
+                readMoreLink.style.display = 'none'; // Hide the Read More link
+            }
+        }
+        
+        async function payForNextChunk(storyId, chunkIndex = 0) {
+            try {
+                // Disable the button while processing
+                const continueBtn = document.getElementById(`continue-btn-${storyId}`);
+                continueBtn.textContent = "Processing...";
+                continueBtn.disabled = true;
+    
+                // Send a POST request to pay for the next chunk
+                const response = await fetch(`/story/pay/${storyId}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ chunk_index: chunkIndex }),
+                });
+    
+                if (!response.ok) {
+                    throw new Error(`Server error: ${response.status}`);
+                }
+        
+                const result = await response.json();
+
+                if (!result || typeof result.next_chunk_content !== 'string') {
+                    throw new Error('Invalid response from server.');
+                }
+        
+                console.log(result);
+                // Handle errors from the server
+                if (result.error) {
+                    alert(result.error);
+                    continueBtn.textContent = `Continue Reading - ₦${result.next_chunk_price || '...'}`;
+                    continueBtn.disabled = false;
+                    return;
+                }
+    
+                // Update the UI for a successful payment
+                if (result.success) {
+                    const storyContainer = document.getElementById(`story-container-${storyId}`);
+                    const storyContent = document.getElementById(`story-content-${storyId}`);
+    
+                    // Update the story content
+                    storyContent.textContent = result.next_chunk_content;
+    
+                    // Update the button or show completion message
+                    if (result.next_chunk_available) {
+                        continueBtn.textContent = `Continue Reading - ₦${result.next_chunk_price}`;
+                        continueBtn.disabled = false;
+                        continueBtn.onclick = () => payForNextChunk(storyId, chunkIndex + 1);
+                    } else {
+                        continueBtn.remove();
+                        const message = document.createElement('p');
+                        message.innerHTML = "<strong>You have unlocked the full story.</strong> 😔";
+                        storyContainer.appendChild(message);
+                    }
+                } else {
+                    alert(result.error || 'Error processing payment.');
+                    continueBtn.textContent = `Continue Reading - ₦${result.next_chunk_price || '...'}`;
+                    continueBtn.disabled = false;
+                }
+                
+            } catch (error) {
+                console.error('An error occurred:', error);
+                alert('Something went wrong. Please try again.');
+    
+                // Reset button state on error
+                const continueBtn = document.getElementById(`continue-btn-${storyId}`);
+                if (continueBtn) {
+                    continueBtn.textContent = "Continue Reading";
+                    continueBtn.disabled = false;
+                }
+            }
+
+            if (result.next_chunk_content && result.next_chunk_content.length > 0) {
+                storyContent.textContent += result.next_chunk_content;
+            } else {
+                console.error("Empty or missing chunk content");
+            }
+            
+        }
+    </script>
+    
+</body>
+
+</html>

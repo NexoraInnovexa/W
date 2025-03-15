@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ group.name }}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f7fc;
+            color: #333;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #007BFF;
+            color: white;
+            padding: 10px 20px;
+        }
+
+        header h1 {
+            margin: 0;
+        }
+
+        header .actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        header .actions button {
+            background-color: white;
+            color: #007BFF;
+            border: none;
+            border-radius: 5px;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+
+        .container {
+            padding: 20px;
+        }
+
+        .section {
+            margin-bottom: 30px;
+        }
+
+        .feed, .comments {
+            list-style: none;
+            padding: 0;
+        }
+
+        .feed li, .comments li {
+            background: white;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            padding: 10px;
+        }
+
+        .search {
+            margin-bottom: 20px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .search input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .search button {
+            padding: 10px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .admin-tools {
+            border: 1px solid #ccc;
+            padding: 20px;
+            border-radius: 8px;
+            background-color: white;
+        }
+
+        .admin-tools h3 {
+            margin-top: 0;
+        }
+
+        .private-messages {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 50px;
+            height: 50px;
+            background-color: #007BFF;
+            color: white;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 24px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>{{ group.name }}</h1>
+        <div class="actions">
+            <button onclick="location.href='/groups/{{ group.id }}/manage'">Manage</button>
+            <button onclick="location.href='/groups'">Back to Groups</button>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Group Details -->
+        <div class="section">
+            <h2>About this Group</h2>
+            <p>{{ group.rules }}</p>
+        </div>
+
+        <!-- Admin Tools (Visible only to group owner or admins) -->
+        {% if current_user.id == group.owner_id or current_user.is_admin %}
+        <div class="section admin-tools">
+            <h3>Admin Tools</h3>
+            <ul>
+                {% for membership in memberships %}
+                <li>
+                    {{ membership.user.username }} - {{ membership.role }}
+                    {% if membership.role != 'admin' %}
+                    <button onclick="updateRole('{{ membership.user.id }}', 'admin')">Promote to Admin</button>
+                    <button onclick="updateRole('{{ membership.user.id }}', 'moderator')">Promote to Moderator</button>
+                    <button onclick="updateRole('{{ membership.user.id }}', 'member')">Demote to Member</button>
+                    <button>
+                    <li><a href="{{ url_for('routes.manage_group_members', group_id=group.id) }}">Manage Members</a></li>
+                    <li><a href="{{ url_for('routes.edit_group', group_id=group.id) }}">Edit Group Settings</a></li>
+                    {% endif %}
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+
+        <!-- Group Feed -->
+        <div class="section">
+            <h2>Group Feed</h2>
+            <div class="search">
+                <input type="text" placeholder="Search posts...">
+                <button>Search</button>
+            </div>
+
+            <ul class="feed">
+                {% for post in posts %}
+                <li>
+                    <strong>{{ post.user.username }}</strong>: {{ post.content }}
+                    <div>
+                        <button onclick="likePost({{ post.id }})">Like ({{ post.likes }})</button>
+                        <button onclick="sharePost({{ post.id }})">Share</button>
+                    </div>
+
+                    <!-- Comments -->
+                    <ul class="comments">
+                        {% for comment in post.comments %}
+                        <li><strong>{{ comment.user.username }}</strong>: {{ comment.content }}</li>
+                        {% endfor %}
+                    </ul>
+
+                    <textarea placeholder="Write a comment..."></textarea>
+                    <button onclick="commentOnPost({{ post.id }})">Comment</button>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+
+    <!-- Private Messaging Icon -->
+    <div class="private-messages" onclick="openMessages()">
+        💬
+    </div>
+
+    <script>
+        async function updateRole(userId, role) {
+            const response = await fetch(`/groups/{{ group.id }}/update_role`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ user_id: userId, role: role })
+            });
+
+            if (response.ok) {
+                alert('User role updated successfully');
+                location.reload();
+            } else {
+                alert('Error updating user role');
+            }
+        }
+
+        function likePost(postId) {
+            alert('Post ' + postId + ' liked!');
+        }
+
+        function sharePost(postId) {
+            alert('Post ' + postId + ' shared!');
+        }
+
+        function commentOnPost(postId) {
+            alert('Comment added to post ' + postId + '!');
+        }
+
+        function openMessages() {
+            alert('Open private messages panel!');
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seller Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <style>
+        /* Global Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Roboto', sans-serif;
+        }
+
+        body {
+            background-color: #000;
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        a {
+            text-decoration: none;
+            color: #fff;
+            transition: color 0.3s ease;
+        }
+
+        a:hover {
+            color: #ff0000;
+        }
+
+        /* Header */
+        header {
+            background-color: #000;
+            border-bottom: 2px solid #ff0000;
+            padding: 20px;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .navbar .logo a {
+            font-size: 24px;
+            font-weight: bold;
+            color: #ff0000;
+        }
+
+        .navbar nav ul {
+            display: flex;
+            gap: 20px;
+        }
+
+        .navbar nav ul li {
+            list-style: none;
+        }
+
+        /* Dashboard Layout */
+        .dashboard {
+            display: flex;
+            flex-grow: 1;
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+            gap: 20px;
+        }
+
+        .sidebar {
+            width: 250px;
+            background-color: #111;
+            border-radius: 10px;
+            padding: 20px;
+        }
+
+        .sidebar ul {
+            list-style: none;
+        }
+
+        .sidebar ul li {
+            margin-bottom: 15px;
+        }
+
+        .sidebar ul li a {
+            color: #fff;
+            font-size: 18px;
+            display: block;
+            padding: 10px;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        .sidebar ul li a:hover {
+            background-color: #ff0000;
+        }
+
+        .content {
+            flex-grow: 1;
+            background-color: #111;
+            border-radius: 10px;
+            padding: 20px;
+        }
+        .buttons{
+            background-color: #dc3545; /* Base red color */
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 12px 20px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.3s ease;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .content h2 {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        .card {
+            background-color: #222;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .card h3 {
+            font-size: 20px;
+            margin-bottom: 10px;
+        }
+
+        .card p {
+            color: #bbb;
+        }
+
+        .btn {
+            display: inline-block;
+            background-color: #ff0000;
+            padding: 10px 20px;
+            border-radius: 5px;
+            color: #fff;
+            font-size: 16px;
+            margin-top: 10px;
+            transition: background-color 0.3s;
+        }
+
+        .btn:hover {
+            background-color: #fff;
+            color: #ff0000;
+        }
+
+        .multi{
+            width: 100%;
+            max-width: 120px;
+            height: 40px; /* Adjust height for multiple selections */
+            padding: 10px;
+            font-size: 16px;
+            border: 2px solid #dc3545; /* Red border */
+            border-radius: 8px;
+            background-color: #fff;
+            color: #333;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+            outline: none;
+            resize: none;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease; 
+        }
+
+        footer {
+            background-color: #111;
+            color: #bbb;
+            text-align: center;
+            padding: 20px;
+            animation: slideInUp 1s ease-in-out;
+        }
+
+        footer p {
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="navbar">
+            <div class="logo">
+                <a href="/">Marketplace</a>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="{{ url_for('routes.marketplace') }}">Buyer View</a></li>
+                    <li><a href="{{ url_for('routes.view_orders') }}">Orders</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Dashboard Layout -->
+    <div class="dashboard">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <ul>
+                <li><a href="{{ url_for('routes.dashboard') }}">W</a></li>
+                <li><a href="{{ url_for('routes.create_product') }}">Create Product</a></li>
+                <li><a href="{{ url_for('routes.marketplace') }}">Marketplace</a></li>
+                <li><a href="{{ url_for('routes.view_orders') }}">View Orders</a></li>
+                <li><a href="{{ url_for('routes.all_products') }}">Manage My Products</a></li>
+                <li><a href="{{ url_for('routes.analytics') }}">Analytics</a></li>
+                <li><a href="{{ url_for('routes.view_dispatch_riders') }}">Connect to Riders</a></li>
+                {% for order in orders %}
+                    <li><a href="{{ url_for('routes.view_delivery', order_id=order.id) }}">Manage Delivery</a></li>
+                {% endfor %}
+
+                {% for order in pending_orders %}
+                    <li><a href="{{ url_for('routes.handle_delivery', order_id=order.id) }}">Handle Deliveries</a></li>
+                {% endfor %}
+            </ul>
+        </div>
+    
+        <!-- Main Content -->
+        <div class="content">
+            <h2>Seller Dashboard</h2>
+    
+            <!-- Product Management -->
+            <div class="card">
+                <h3>Create Product</h3>
+                <p>Add new products to the marketplace.</p>
+                <a href="{{ url_for('routes.create_product') }}" class="btn">Add Product</a>
+            </div>
+    
+            <!-- Inventory Management -->
+            <div class="card">
+                <h3>Analytics</h3>
+                <p>Check if your product is doing well.</p>
+                <a href="{{ url_for('routes.marketplace') }}" class="btn">Analytics</a>
+            </div>
+    
+            <!-- Orders -->
+            <div class="card">
+                <h3>View Orders</h3>
+                <p>See all orders placed by customers and their details.</p>
+                <a href="{{ url_for('routes.view_orders') }}" class="btn">View Orders</a>
+            </div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Image</th>
+                        <th>Name</th>
+                        <th>Price</th>
+                        <th>Quantity</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for product in products %}
+                        <tr>
+                            <td>
+                                <img src="{{ url_for('static', filename='uploads/' + product.images[0]) }}" alt="{{ product.name }}" width="100">
+                            </td>
+                            <td>{{ product.name }}</td>
+                            <td>${{ product.price }}</td>
+                            <td>{{ product.quantity }}</td>
+                            <td>
+                                <div class="product-card">
+                                    <!-- Display Product Details -->
+                                    <h4>{{ product.name }}</h4>
+                                    <p>{{ product.description }}</p>
+                                    <p>Price: ${{ product.price }}</p>
+                                    <p>Quantity: {{ product.quantity }}</p>
+                                    <p>Tags: {{ product.tags }}</p>
+                                    <p>Banner: {{ product.banner if product.banner else 'None' }}</p>
+                                
+                                    <!-- Toggle Edit Form Button -->
+                                    <button class="buttons" onclick="toggleEditForm('{{ product.id }}')">Edit</button>
+                                
+                                    <!-- Delete Button -->
+                                    <form method="POST" action="{{ url_for('routes.all_products') }}">
+                                        <input type="hidden" name="product_id" value="{{ product.id }}">
+                                        <button type="submit" name="action" value="delete" onclick="return confirm('Are you sure you want to delete this product?');" class="buttons">Delete</button>
+                                    </form>
+                                
+                                    <!-- Hidden Edit Form -->
+                                    <form method="POST" action="{{ url_for('routes.all_products') }}" enctype="multipart/form-data" id="edit-form-{{ product.id }}" style="display: none; margin-top: 20px;">
+                                        <input type="hidden" name="product_id" value="{{ product.id }}">
+                                
+                                        <!-- Editable Fields -->
+                                        <input type="text" name="name" value="{{ product.name }}" placeholder="Product Name" required>
+                                        <textarea name="description" placeholder="Product Description" required>{{ product.description }}</textarea>
+                                        <input type="number" name="price" value="{{ product.price }}" placeholder="Price" step="0.01" required>
+                                        <input type="number" name="quantity" value="{{ product.quantity }}" placeholder="Quantity" required>
+                                        <input type="text" name="tags" value="{{ product.tags }}" placeholder="Tags (comma-separated)">
+                                
+                                        <!-- Banner Options -->
+                                        <select name="banner" class="multi">
+                                            <option value="">No Banner</option>
+                                            <option value="promo" {% if product.banner == 'promo' %}selected{% endif %}>Promo</option>
+                                            <option value="sold" {% if product.banner == 'sold' %}selected{% endif %}>Sold</option>
+                                            <option value="discount" {% if product.banner == 'discount' %}selected{% endif %}>Discount</option>
+                                            <option value="new_arrival" {% if product.banner == 'new_arrival' %}selected{% endif %}>New Arrival</option>
+                                        </select>
+                                
+                                        <!-- File Uploads -->
+                                        <label for="image_1">Image 1:</label>
+                                        <input type="file" name="image_1">
+                                        <label for="image_2">Image 2:</label>
+                                        <input type="file" name="image_2">
+                                        <label for="image_3">Image 3:</label>
+                                        <input type="file" name="image_3">
+                                
+                                        <!-- Submit Button -->
+                                        <button type="submit" name="action" value="edit" class="buttons">Save Changes</button>
+                                    </form>
+                                </div>
+                                
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            
+    
+            <h2>Pending Orders</h2>
+            <ul>
+                {% for order in pending_orders %}
+                    <li>
+                        <a href="{{ url_for('routes.handle_delivery', order_id=order.id) }}">Handle Deliveries</a>
+                    </li>
+                {% endfor %}
+            </ul>
+    
+            <h2>Finished Orders</h2>
+            <ul>
+                {% for order in finished_orders %}
+                    <li>Order ID: {{ order.id }} - Status: {{ order.status }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+
+    
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2024 Marketplace. All Rights Reserved.</p>
+    </footer>
+
+    <script>
+        function toggleEditForm(productId) {
+            const form = document.getElementById(`edit-form-${productId}`);
+            if (form.style.display === "none") {
+                form.style.display = "block";
+            } else {
+                form.style.display = "none";
+            }
+        }
+    </script>
+    
+</body>
+</html>    
+    

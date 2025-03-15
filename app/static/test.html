@@ -1,0 +1,20 @@
+<button id="payButton">Pay Now</button>
+<script>
+    document.getElementById("payButton").addEventListener("click", function() {
+        const handler = PaystackPop.setup({
+            key: "pk_live_dcabc09fe82e6fb82ee43af5d6d191ced99e0f76", // Replace with your actual public key
+            email: "user@example.com", // Replace with the actual user's email
+            amount: 250000, // Amount in kobo (₦2,500)
+            currency: "NGN",
+            ref: `test_${new Date().getTime()}`,
+            callback: function(response) {
+                alert("Payment complete! Reference: " + response.reference);
+            },
+            onClose: function() {
+                alert("Transaction cancelled.");
+            }
+        });
+
+        handler.openIframe();
+    });
+</script>

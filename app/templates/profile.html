@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile Page</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
+            color: #212529;
+        }
+        .sidebar {
+            background-color: #000;
+            color: #fff;
+            height: 100vh;
+            position: fixed;
+            width: 250px;
+            padding: 1rem;
+        }
+        .sidebar a {
+            color: #fff;
+            text-decoration: none;
+            display: block;
+            margin: 1rem 0;
+        }
+        .sidebar a:hover {
+            color: red;
+        }
+        .content {
+            margin-left: 260px;
+            padding: 1rem;
+        }
+        .profile-banner {
+            position: relative;
+            height: 200px;
+            background-color: #000;
+            color: #fff;
+            text-align: center;
+        }
+        .profile-banner img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .profile-image {
+            position: absolute;
+            bottom: -50px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            border: 3px solid #fff;
+            background-color: #000;
+        }
+        .profile-image img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        .edit-profile {
+            text-align: center;
+            margin-top: 60px;
+        }
+        .btn-red {
+            background-color: red;
+            color: #fff;
+            border: none;
+        }
+        .btn-red:hover {
+            background-color: #c00;
+        }
+        .form-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Blue Tick Styling */
+        .blue-tick {
+            color: #1da1f2;
+            margin-left: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <h2>Profile</h2>
+        <a href="{{ url_for('routes.dashboard') }}"><i class="fa fa-home"></i> Dashboard</a>
+        <a href="{{ url_for('routes.edit_profile') }}"><i class="fa fa-user"></i> Profile</a>
+        <a href="{{ url_for('routes.explore') }}"><i class="fa fa-compass"></i> Explore</a>
+        <a href="{{ url_for('routes.marketplace') }}"><i class="fa fa-store"></i> Marketplace</a>
+        <a href="#"><i class="fa fa-bell"></i> Notifications</a>
+        <a href="#"><i class="fa fa-envelope"></i> Messages</a>
+        <a href="#"><i class="fa fa-briefcase"></i> Jobs</a>
+        <a href="#"><i class="fa fa-bullhorn"></i> Ads</a>
+        <a href="#"><i class="fa fa-crown"></i> Premium</a>
+        <a href="#"><i class="fa fa-paint-brush"></i> Artistries</a>
+        <a href="#"><i class="fa fa-chart-line"></i> Analytics</a>
+        <a href="#"><i class="fa fa-users"></i> Groups</a>
+        <a href="#"><i class="fa fa-paw"></i> Pets</a>
+        <a href="#"><i class="fa fa-calendar-alt"></i> Calendar/Reminders</a>
+        <a href="{{ url_for('routes.create_post') }}"><i class="fa fa-plus-circle"></i> Create Post</a>
+        <a href="#"><i class="fa fa-cog"></i> Settings</a>
+        <a href="#"><i class="fa fa-sign-out-alt"></i> Logout</a>
+    </div>
+
+    <div class="content">
+        <div class="profile-banner">
+            <img src="{{ url_for('static', filename='uploads/' + (user.banner_image or 'banner-placeholder.jpg')) }}" alt="Banner Image">
+            <div class="profile-image">
+                <img src="{{ url_for('static', filename='uploads/' + (user.profile_image or 'profile-placeholder.jpg')) }}" alt="Profile Image">
+            </div>
+        </div>
+        <div class="edit-profile">
+            <h3>
+                {{ user.username }}
+                {% if user.blue_tick %}
+                    <i class="fa fa-check-circle blue-tick" title="Verified"></i>
+                {% endif %}
+            </h3>
+            <p>{{ user.bio }}</p>
+            <button class="btn btn-red" data-bs-toggle="modal" data-bs-target="#editProfileModal">Edit Profile</button>
+        </div>
+
+        <!-- Modal -->
+        <div class="modal fade" id="editProfileModal" tabindex="-1" aria-labelledby="editProfileModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="editProfileModalLabel">Edit Profile</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form class="form-container" action="/update-profile" method="POST" enctype="multipart/form-data">
+                            <div class="mb-3">
+                                <label for="profileImage" class="form-label">Profile Image</label>
+                                <input class="form-control" type="file" id="profileImage" name="profile_image">
+                            </div>
+                            <div class="mb-3">
+                                <label for="bannerImage" class="form-label">Banner Image</label>
+                                <input class="form-control" type="file" id="bannerImage" name="banner_image">
+                            </div>
+                            <div class="mb-3">
+                                <label for="username" class="form-label">Username</label>
+                                <input type="text" class="form-control" id="username" name="username" value="{{ user.username }}">
+                            </div>
+                            <div class="mb-3">
+                                <label for="bio" class="form-label">Bio</label>
+                                <textarea class="form-control" id="bio" name="bio" rows="3">{{ user.bio }}</textarea>
+                            </div>
+                            <button type="submit" class="btn btn-red">Save Changes</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>{{ group.name }}</h1>
+<p><strong>Rules:</strong> {{ group.rules }}</p>
+
+{% if group.profile_picture %}
+    <img src="{{ group.profile_picture }}" alt="Group Profile Picture">
+{% else %}
+    <p>No profile picture set</p>
+{% endif %}
+
+{% if group.owner == session['user_id'] %}
+    <h2>Set Profile Picture</h2>
+    <form method="POST" action="{{ url_for('routes.set_profile_picture', group_id=group.id) }}">
+        <label for="picture_url">Profile Picture URL</label>
+        <input type="text" id="picture_url" name="picture_url" required>
+        <button type="submit">Set Picture</button>
+    </form>
+{% endif %}
+
+<h2>Join Requests</h2>
+<ul>
+    {% for request in group.join_requests %}
+    <li>{{ request }}
+        <form method="POST" action="{{ url_for('routes.approve_request', group_id=group.id) }}">
+            <input type="hidden" name="user_id" value="{{ request }}">
+            <button type="submit">Approve</button>
+        </form>
+        <form method="POST" action="{{ url_for('routes.deny_request', group_id=group.id) }}">
+            <input type="hidden" name="user_id" value="{{ request }}">
+            <button type="submit">Deny</button>
+        </form>
+    </li>
+    {% endfor %}
+</ul>
+
+<h2>Members</h2>
+<ul>
+    {% for member in group.members %}
+    <li>{{ member }}
+        {% if group.owner == session['user_id'] and member != group.owner %}
+        <form method="POST">
+            <input type="hidden" name="user_id" value="{{ member }}">
+            <input type="hidden" name="action" value="remove">
+            <button type="submit">Remove</button>
+        </form>
+        {% endif %}
+    </li>
+    {% endfor %}
+</ul>
+
+<h2>Add Member</h2>
+<form method="POST">
+    <input type="hidden" name="action" value="add">
+    <label for="user_id">User ID</label>
+    <input type="text" id="user_id" name="user_id" required>
+    <button type="submit">Add Member</button>
+</form>
+
+{% if group.owner == session['user_id'] %}
+<form method="POST" action="{{ url_for('routes.delete_group_route', group_id=group.id) }}">
+    <button type="submit">Delete Group</button>
+</form>
+{% endif %}
+
+{% endblock %}

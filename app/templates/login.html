@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Log In</title>
+    <style>
+        /* Global Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: black;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            overflow-y: auto;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: row;
+            width: 90%;
+            max-width: 1200px;
+            background-color: #111;
+            border-radius: 15px;
+            box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.5);
+            overflow: hidden;
+            margin: 40px 0;
+        }
+
+        /* Left Side - Form Section */
+        .form-section {
+            flex: 1;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .form-section header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .form-section header img {
+            width: 120px;
+            border-radius: 50%;
+        }
+
+        .form-section header h1 {
+            font-size: 28px;
+            margin-top: 10px;
+            text-transform: uppercase;
+        }
+
+        form {
+            background-color: #222;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 12px rgba(255, 255, 255, 0.2);
+        }
+
+        form div {
+            margin-bottom: 20px;
+        }
+
+        label {
+            font-size: 14px;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        input[type="email"],
+        input[type="password"] {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 5px;
+            background-color: #333;
+            color: white;
+            font-size: 14px;
+        }
+
+        input[type="email"]:focus,
+        input[type="password"]:focus {
+            outline: none;
+            border: 2px solid red;
+        }
+
+        button[type="submit"] {
+            width: 100%;
+            padding: 12px;
+            background-color: red;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        button[type="submit"]:hover {
+            transform: scale(1.05);
+        }
+
+        .login-options {
+            margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .login-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: black;
+            color: white;
+            border: 2px solid white;
+            border-radius: 5px;
+            padding: 10px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .login-btn:hover {
+            background-color: red;
+        }
+
+        .login-btn img {
+            width: 20px;
+            margin-right: 10px;
+        }
+
+        p {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        p a {
+            color: red;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        p a:hover {
+            text-decoration: underline;
+        }
+
+        /* Right Side - Image Section */
+        .image-section {
+            flex: 1;
+            background: linear-gradient(to bottom right, transparent 50%, black 50%), url('{{ url_for('static', filename='lauging.jpg') }}') no-repeat center center;
+            background-size: cover;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .image-section h2 {
+            font-size: 28px;
+            color: white;
+            text-align: center;
+            background-color: rgba(0, 0, 0, 0.6);
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Left Side -->
+        <div class="form-section">
+            <header>
+                <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo">
+                <h1>Welcome Back!</h1>
+            </header>
+
+            <form method="POST" action="{{ url_for('routes.login') }}">
+                <div>
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                <div>
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+                <button type="submit">Log In</button>
+            </form>
+
+            <div class="login-options">
+                <button class="login-btn">
+                    <img src="{{ url_for('static', filename='google-icon.png') }}" alt="Google">
+                    Login with Google
+                </button>
+                <button class="login-btn">
+                    <img src="{{ url_for('static', filename='ios-icon.png') }}" alt="iOS">
+                    Login with iOS
+                </button>
+            </div>
+
+            <p>Don't have an account? <a href="{{ url_for('routes.signup') }}">Sign Up</a></p>
+            <p><a href="{{ url_for('routes.home') }}">Back to Home</a></p>
+        </div>
+
+        <!-- Right Side -->
+        <div class="image-section">
+            <h2>Stay connected, laugh, and share moments.</h2>
+        </div>
+    </div>
+</body>
+</html>

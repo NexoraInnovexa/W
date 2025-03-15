@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Product</title>
+    <link rel="stylesheet" href="static/styles.css">
+    <style>
+        /* Global Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Roboto', sans-serif;
+        }
+
+        body {
+            background-color: #f8f9fa;
+            color: #333;
+        }
+
+        header {
+            background-color: #FF0000;
+            color: white;
+            padding: 10px 0;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        
+
+        .navbar .logo a {
+            text-decoration: none;
+            font-size: 28px;
+            color: white;
+            font-weight: bold;
+        }
+
+        .navbar nav ul {
+            list-style-type: none;
+            display: flex;
+            gap: 20px;
+        }
+
+        .navbar nav ul li a {
+            text-decoration: none;
+            color: white;
+            font-size: 18px;
+            transition: color 0.3s ease;
+        }
+
+        .navbar nav ul li a:hover {
+            color: #ff4747;
+        }
+
+        .product-form {
+            padding: 40px;
+            max-width: 400px;
+            margin: 20px auto;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            animation: fadeIn 1s ease-in;
+        }
+
+        .product-form h2 {
+            font-size: 32px;
+            margin-bottom: 30px;
+            color: #333;
+            text-align: center;
+        }
+
+        .product-form label {
+            font-size: 16px;
+            margin-bottom: 8px;
+            display: block;
+            color: #333;
+        }
+
+        .product-form input,
+        .product-form textarea {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            font-size: 16px;
+        }
+
+        .product-form button {
+            background-color: #ff4747;
+            color: white;
+            padding: 14px 20px;
+            font-size: 18px;
+            border: none;
+            border-radius: 5px;
+            width: 100%;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .product-form button:hover {
+            background-color: #e03939;
+        }
+
+        .image-upload {
+            display: flex;
+            gap: 10px;
+            justify-content: space-between;
+        }
+
+        .image-upload input[type="file"] {
+            width: 72%;
+        }
+
+        .product-preview {
+            margin-top: 40px;
+            text-align: center;
+            animation: fadeIn 1s ease-in;
+        }
+
+        .product-preview h3 {
+            font-size: 28px;
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .product-preview .images {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            overflow-x: auto;
+            padding-bottom: 10px;
+        }
+
+        .product-preview img {
+            width: 200px;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 8px;
+            transition: transform 0.3s ease;
+        }
+
+        .product-preview img:hover {
+            transform: scale(1.05);
+        }
+
+        .product-preview .details {
+            margin-top: 15px;
+            font-size: 18px;
+            color: #333;
+        }
+
+        .product-preview .details p {
+            margin-bottom: 10px;
+        }
+
+        footer {
+            background-color: #343a40;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        /* Media Queries for Responsiveness */
+        @media (max-width: 768px) {
+            .product-form {
+                padding: 20px;
+            }
+
+            .image-upload {
+                flex-direction: column;
+            }
+
+            .image-upload input[type="file"] {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="navbar">
+            <div class="logo">
+                <a href="/">Marketplace</a>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="{{ url_for('routes.create_product') }}">Create Product</a></li>
+                    <li><a href="{{ url_for('routes.marketplace') }}">Marketplace</a></li>
+                    <li><a href="{{ url_for('routes.view_orders') }}">Orders</a></li>
+                    <li><a href="{{ url_for('routes.dashboard') }}">Home</a></li>
+                    <li><a href="{{ url_for('routes.sellers') }}">Sellers Dashboard</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="product-form">
+        <h2>Create New Product</h2>
+        <form method="POST" enctype="multipart/form-data">
+            <label for="name">Product Name</label>
+            <input type="text" id="name" name="name" required>
+
+            <label for="price">Price</label>
+            <input type="number" id="price" name="price" required>
+
+            <label for="description">Description</label>
+            <textarea id="description" name="description" required></textarea>
+
+            <div class="image-upload">
+                <div>
+                    <label for="image_1">Image 1</label>
+                    <input type="file" id="image_1" name="image_1" accept="image/*" required>
+                </div>
+                <div>
+                    <label for="image_2">Image 2</label>
+                    <input type="file" id="image_2" name="image_2" accept="image/*">
+                </div>
+                <div>
+                    <label for="image_3">Image 3</label>
+                    <input type="file" id="image_3" name="image_3" accept="image/*">
+                </div>
+            </div>
+
+            <label for="quantity">Quantity</label>
+            <input type="number" id="quantity" name="quantity" required>
+
+            <label for="tags">Tags (e.g. sports, technology)</label>
+            <input type="text" id="tags" name="tags">
+
+            <button type="submit">Create Product</button>
+        </form>
+    </main>
+
+    {% if product %}
+        <div class="product-preview">
+            <h3>{{ product.name }}</h3>
+            <div class="images">
+                {% for image in product.images %}
+                    <img src="{{ image }}" alt="Product Image">
+                {% endfor %}
+            </div>
+            <div class="details">
+                <p>Price: ${{ product.price }}</p>
+                <p>Description: {{ product.description }}</p>
+                <p>Quantity: {{ product.quantity }}</p>
+                <p>Tags: {{ product.tags }}</p>
+            </div>
+        </div>
+    {% endif %}
+
+    <footer>
+        <p>&copy; 2024 Marketplace. All Rights Reserved.</p>
+    </footer>
+</body>
+</html>

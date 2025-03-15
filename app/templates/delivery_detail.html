@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delivery Details</title>
+    <style>
+        /* General Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+        }
+
+        /* Side Menu Styling */
+        .sidebar {
+            width: 250px;
+            height: 100vh;
+            background-color: black;
+            position: fixed;
+            top: 0;
+            left: 0;
+            color: white;
+            padding-top: 20px;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .sidebar a {
+            display: block;
+            color: white;
+            padding: 15px;
+            text-decoration: none;
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .sidebar a:hover {
+            background-color: red;
+            color: white;
+        }
+
+        /* Animated Banner */
+        .banner {
+            width: 100%;
+            background-color: #222;
+            color: white;
+            text-align: center;
+            padding: 10px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            animation: slideIn 10s infinite alternate;
+        }
+
+        @keyframes slideIn {
+            0% { transform: translateX(100%); }
+            100% { transform: translateX(0); }
+        }
+
+        /* Content Styling */
+        .content {
+            margin-left: 250px;
+            padding: 30px;
+        }
+
+        .content h3 {
+            font-size: 2rem;
+            color: red;
+            margin-bottom: 20px;
+        }
+
+        .content p {
+            font-size: 1.2rem;
+            color: #333;
+            margin: 10px 0;
+        }
+
+        .delivery-info p {
+            font-size: 1.1rem;
+            color: #555;
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            margin-top: 30px;
+        }
+
+        .action-buttons .btn {
+            padding: 12px 20px;
+            margin-right: 15px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1rem;
+            transition: all 0.3s ease-in-out;
+        }
+
+        .btn-primary {
+            background-color: red;
+            color: white;
+            border: 2px solid red;
+        }
+
+        .btn-primary:hover {
+            background-color: darkred;
+            border-color: darkred;
+        }
+
+        .btn-secondary {
+            background-color: black;
+            color: white;
+            border: 2px solid black;
+        }
+
+        .btn-secondary:hover {
+            background-color: #444;
+            border-color: #444;
+        }
+
+        /* Mobile Responsiveness */
+        @media screen and (max-width: 768px) {
+            .sidebar {
+                width: 200px;
+            }
+
+            .content {
+                margin-left: 0;
+                padding: 15px;
+            }
+
+            .action-buttons .btn {
+                margin-right: 10px;
+                margin-bottom: 15px;
+            }
+        }
+        .btn-delivery-form {
+            display: inline-flex;
+            align-items: center;
+            padding: 12px 20px;
+            background-color: red;
+            color: white;
+            font-weight: bold;
+            font-size: 1rem;
+            border-radius: 5px;
+            border: 2px solid red;
+            text-decoration: none;
+            transition: all 0.3s ease-in-out;
+            
+        }
+
+        .btn-delivery-form:hover {
+            background-color: darkred;
+            border-color: darkred;
+        }
+
+        .btn-delivery-form .icon {
+            margin-right: 10px; /* Space between icon and text */
+            font-size: 1.2rem;
+        }
+
+        /* Plus Icon Styling */
+        .icon {
+            font-size: 1.4rem; /* Larger size for the plus icon */
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Side Menu -->
+    <div class="sidebar">
+        <li><a href="{{ url_for('routes.dashboard') }}">W</a></li>
+        <li><a href="{{ url_for('routes.create_product') }}">Create Product</a></li>
+        <li><a href="{{ url_for('routes.marketplace') }}">Marketplace</a></li>
+        <li><a href="{{ url_for('routes.view_orders') }}">View Orders</a></li>
+        <li><a href="{{ url_for('routes.all_products') }}">Manage My Products</a></li>
+        <li><a href="{{ url_for('routes.analytics') }}">Analytics</a></li>
+        <li><a href="{{ url_for('routes.view_dispatch_riders') }}">Connect to Riders</a></li>
+        <a href="{{ url_for('routes.delivery_details') }}">Manage Delivery</a>
+
+
+        
+    </div>
+
+    <!-- Animated Banner for Ads -->
+    <div class="banner">
+        <span>Get 50% Off on Selected Items! Visit Our Store Now!</span>
+    </div>
+
+    <!-- Content Section -->
+    <div class="content">
+        <h3>Delivery Details</h3>
+        <p><strong>Delivery Address:</strong> {{ delivery.delivery_address }}</p>
+        <p><strong>Delivery Date:</strong> {{ delivery.delivery_date }}</p>
+        
+        {% if dispatch_rider %}
+            <p><strong>Dispatch Rider:</strong> {{ dispatch_rider.name }}</p>
+            <p><strong>Vehicle Type:</strong> {{ dispatch_rider.vehicle_type }}</p>
+            <p><strong>Vehicle Number:</strong> {{ dispatch_rider.vehicle_number }}</p>
+            <p><strong>Contact:</strong> 
+                <a href="mailto:{{ dispatch_rider.email }}" style="color: red;">Email</a> | 
+                <a href="tel:{{ dispatch_rider.phone }}" style="color: red;">Call</a>
+            </p>
+        {% else %}
+            <p>No dispatch rider assigned yet.</p>
+        {% endif %}
+
+        
+
+        <!-- Display Existing Delivery Details -->
+        {% if delivery %}
+            <h3>Existing Delivery Information</h3>
+            <div class="delivery-info">
+                <p><strong>Delivery Address:</strong> {{ delivery.address }}</p>
+                <p><strong>Delivery Person:</strong> {{ delivery.delivery_person }}</p>
+                <p><strong>Delivery Date:</strong> {{ delivery.delivery_date }}</p>
+            </div>
+        {% endif %}
+
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+            <a href="/marketplace" class="btn btn-primary">Back to Marketplace</a>
+            <a href="/orders" class="btn btn-secondary">View All Orders</a>
+            <a href="{{ url_for('routes.delivery_details') }}"class="btn-delivery-form" > 
+                <span class="icon">+</span> Delivery Form
+            </a>
+    
+        </div>
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Manage Users</title>
+</head>
+<body>
+    <h1>Manage Users for {{ group.name }}</h1>
+    <ul>
+        {% for membership in memberships %}
+        <li>
+            {{ membership.user.username }} - {{ membership.role }}
+            {% if membership.role != 'admin' %}
+            <button onclick="updateRole('{{ membership.user.id }}', 'admin')">Promote to Admin</button>
+            <button onclick="updateRole('{{ membership.user.id }}', 'moderator')">Promote to Moderator</button>
+            <button onclick="updateRole('{{ membership.user.id }}', 'member')">Demote to Member</button>
+            {% endif %}
+        </li>
+        {% endfor %}
+    </ul>
+    <script>
+        async function updateRole(userId, role) {
+            const response = await fetch(`/groups/{{ group.id }}/update_role`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ user_id: userId, role: role })
+            });
+
+            if (response.ok) {
+                alert('User role updated successfully');
+                location.reload();
+            } else {
+                alert('Error updating user role');
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Jobs</title>
+    <!-- Link to Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <style>
+        /* General styles */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+        }
+
+        /* Navbar styles */
+        .navbar {
+            background-color: #fff;
+            color: #000;
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .navbar .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: black;
+        }
+
+        .nav-links {
+            list-style: none;
+            display: flex;
+            gap: 40px;
+        }
+
+        .nav-links a {
+            color: black;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .nav-links a:hover {
+            color: #d32f2f;
+        }
+
+        /* Sidebar styles */
+        .dashboard-layout {
+            display: flex;
+            gap: 20px;
+            padding: 20px;
+        }
+
+        .sidebar, .right-sidebar {
+            width: 220px;
+            background-color: #ffffff;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .sidebar h3, .right-sidebar h3 {
+            color: #d32f2f;
+            margin-bottom: 10px;
+        }
+
+        .sidebar ul, .right-sidebar ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .sidebar ul li, .right-sidebar ul li {
+            margin-bottom: 10px;
+        }
+
+        .sidebar ul li a, .right-sidebar ul li a {
+            text-decoration: none;
+            color: #333;
+            padding: 8px;
+            border-radius: 5px;
+            display: block;
+        }
+
+        .sidebar ul li a:hover, .right-sidebar ul li a:hover {
+            background-color: #fbe9e7;
+            color: #d32f2f;
+        }
+
+        /* Main content styles */
+        .main-content {
+            flex: 1;
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .main-content h2 {
+            color: #d32f2f;
+            margin-bottom: 15px;
+        }
+
+        .main-content form {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .main-content form input[type="text"], 
+        .main-content form textarea {
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .main-content form button {
+            background-color: #d32f2f;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .main-content form button:hover {
+            background-color: #b71c1c;
+        }
+
+        /* Footer */
+        .footer {
+            background-color: #000;
+            color: #fff;
+            text-align: center;
+            padding: 10px;
+        }
+
+        /* Job Applications Section */
+        .job-application-list ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+
+        .job-application-list ul li {
+            margin-bottom: 20px;
+        }
+
+        .job-application-list ul li h3 {
+            margin: 0;
+            font-size: 1.2rem;
+        }
+
+        .job-application-list ul li a {
+            text-decoration: none;
+            color: #007bff;
+            font-weight: bold;
+        }
+
+        .job-application-list ul li a:hover {
+            text-decoration: underline;
+        }
+        .nav-links, .nav-icons {
+            list-style: none;
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+        .nav-links a, .nav-icons a {
+            color: black;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .nav-links a:hover, .nav-icons a:hover {
+            color: #b71c1c;
+        }
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #ff5733;
+            min-width: 160px;
+            z-index: 1;
+            padding: 12px;
+            border-radius: 5px;
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        .dropdown-content a {
+            color: white;
+            text-decoration: none;
+            display: block;
+            padding: 8px 12px;
+            font-size: 1.2rem;
+        }
+
+        .dropdown-content a:hover {
+            background-color: #e04e29;
+        }
+        
+    </style>
+</head>
+<body>   
+    <!-- Navbar -->
+    <div class="navbar">
+        <a href="{{ url_for('routes.dashboard') }}" class="logo">W</a>
+        <ul class="nav-links">
+            <li><a href="{{ url_for('routes.job_dashboard') }}"><i class="fas fa-briefcase"></i> Job Dashboard</a></li>
+            <li><a href="{{ url_for('routes.view_jobs') }}"><i class="fas fa-briefcase"></i> View Jobs</a></li>
+            <li><a href="{{ url_for('routes.view_services') }}"><i class="fas fa-tools"></i> View Services</a></li>
+            <li><a href="{{ url_for('routes.post_job') }}"><i class="fas fa-plus"></i> Post Job</a></li>
+            <li><a href="{{ url_for('routes.post_service') }}"><i class="fas fa-plus-circle"></i> Post Service</a></li>
+            <li><a href="{{ url_for('routes.logout') }}"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+            
+        </ul>
+        
+    </div>
+    <div class="nav-search">
+        <input type="text" placeholder="Search..." style="padding: 5px; border-radius: 5px;">
+        <a href="#"><i class="fas fa-search"></i></a>
+    </div>
+    <div class="dropdown">
+        <a href="#"><i class="fas fa-calendar-alt"></i></a>
+        <div class="dropdown-content">
+            <a href="{{ url_for('routes.create_event') }}">Create Event</a>
+            <a href="{{ url_for('routes.all_events') }}">View Events</a>
+
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="dashboard-layout">
+            <!-- Left Sidebar -->
+            <div class="sidebar">
+                <h3>Jobs</h3>
+                <ul>
+                    <li><a href="{{ url_for('view_jobs') }}"><i class="fas fa-briefcase"></i> View all Jobs</a></li>
+                    <li><a href="{{ url_for('routes.view_applications', job_id=job.id) }}"><i class="fas fa-file-alt"></i> Job Applications</a></li>
+                    <li><a href="{{ url_for('view_services') }}"><i class="fas fa-tools"></i> Services</a></li>
+                    <li><a href="{{ url_for('view_service_requests') }}"><i class="fas fa-envelope"></i> Service Requests</a></li>
+                    
+                </ul>
+            </div>
+
+            <!-- Main Content -->
+            <div class="main-content">
+                <h2>Post a Job</h2>
+                <form method="POST">
+                    <label for="title">Job Title:</label>
+                    <input type="text" name="title" required><br>
+
+                    <label for="description">Job Description:</label>
+                    <textarea name="description" required></textarea><br>
+
+                    <label for="tags">Tags (comma-separated):</label>
+                    <input type="text" name="tags" required><br>
+
+                    <label for="salary_range">Salary Range:</label>
+                    <input type="text" name="salary_range" placeholder="e.g., 50,000 - 70,000" required><br>
+
+                    <button type="submit">Post Job</button>
+                </form>
+
+                <h2>Applications for {{ job.title }}</h2>
+                <ul>
+                    {% for application in job.applications %}
+                        <li>
+                            <h3>{{ application.job_seeker.name }}</h3>
+                            <p>{{ application.message }}</p>
+                            {% if application.resume %}
+                                <a href="{{ url_for('routes.download_resume', filename=application.resume) }}">Download Resume</a>
+                            {% endif %}
+                        </li>
+                    {% endfor %}
+                </ul>
+
+                <h2>Job Applications</h2>
+                <ul>
+                    {% for job in jobs %}
+                        <li>
+                            <h3>{{ job.title }}</h3>
+                            <p>{{ job.description }}</p>
+                            <p>Tags: {{ job.tags }}</p>
+                            <p><strong>Salary Range:</strong> {{ job.salary_range }}</p>
+                            <a href="{{ url_for('view_job_applications', job_id=job.id) }}">View Applications</a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+            <!-- Right Sidebar -->
+            <div class="right-sidebar">
+                <h3>Popular Jobs</h3>
+                <ul>
+                    <li><a href="#">Software Engineer</a></li>
+                    <li><a href="#">Product Manager</a></li>
+                    <li><a href="#">Data Scientist</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+        <p>&copy; 2024 W - All Rights Reserved</p>
+    </div>
+</body>
+</html>

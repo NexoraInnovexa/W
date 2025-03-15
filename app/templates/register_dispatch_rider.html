@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dispatch Rider Registration</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <style>
+        /* General Styling */
+body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f8f9fa;
+    color: #333;
+}
+
+/* Sidebar Menu */
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 250px;
+    height: 100%;
+    background-color: black;
+    color: white;
+    padding: 20px;
+    transition: transform 0.3s ease;
+}
+
+.sidebar h2 {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.sidebar ul {
+    list-style: none;
+    padding: 0;
+}
+
+.sidebar ul li {
+    margin: 15px 0;
+}
+
+.sidebar ul li a {
+    color: white;
+    text-decoration: none;
+    font-size: 18px;
+    display: block;
+    transition: color 0.3s ease;
+}
+
+.sidebar ul li a:hover {
+    color: #dc3545;
+}
+
+/* Main Content Area */
+.main-content {
+    margin-left: 250px; /* to allow space for sidebar */
+    padding: 20px;
+    background-color: white;
+    min-height: 100vh;
+}
+
+/* Sliding Banner */
+.sliding-banner {
+    background-color: #dc3545;
+    color: white;
+    text-align: center;
+    padding: 10px;
+    animation: slideIn 5s infinite;
+}
+
+@keyframes slideIn {
+    0% { transform: translateX(100%); }
+    50% { transform: translateX(0); }
+    100% { transform: translateX(-100%); }
+}
+
+/* Advert Banners */
+.advert-banner {
+    background-color: #f8d7da;
+    color: #721c24;
+    text-align: center;
+    padding: 10px;
+    margin: 10px 0;
+    font-weight: bold;
+}
+
+.top-ad {
+    margin-top: 20px;
+}
+
+.bottom-ad {
+    margin-bottom: 20px;
+}
+
+/* Dispatch Rider Registration Form */
+.container {
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+h2 {
+    color: #dc3545;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+form {
+    background-color: white;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+}
+
+label {
+    display: block;
+    margin: 10px 0 5px;
+    color: #343a40;
+}
+
+input, select, button {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+button {
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-size: 18px;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #c82333;
+}
+
+/* Floating Dispatch Rider Names */
+.floating-riders {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background-color: #fff;
+    padding: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    border-radius: 8px;
+    width:90px;
+}
+
+.floating-riders ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.floating-riders li {
+    font-size: 14px;
+    margin: 5px 0;
+}
+
+.floating-riders h3 {
+    margin-bottom: 10px;
+    color: #343a40;
+}
+
+    </style>
+</head>
+<body>
+    <!-- Sidebar Menu -->
+    <div class="sidebar">
+        <h2>Menu</h2>
+        <ul>
+            <li><a href="{{ url_for('routes.dashboard') }}">W</a></li>
+            <li><a href="{{ url_for('routes.create_product') }}">Create Product</a></li>
+            <li><a href="{{ url_for('routes.marketplace') }}">Marketplace</a></li>
+            <li><a href="{{ url_for('routes.view_orders') }}">View Orders</a></li>
+            <li><a href="{{ url_for('routes.all_products') }}">Manage My Products</a></li>
+            <li><a href="{{ url_for('routes.analytics') }}">Analytics</a></li>
+        </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Sliding Banner -->
+        <div class="sliding-banner">
+            <p>Special Offer: Free Delivery for the First 50 Orders! 🚚🎉</p>
+        </div>
+
+        <!-- Advert Banners -->
+        <div class="advert-banner top-ad">
+            <p>Advert 1: Get 20% Off on Your First Delivery!</p>
+        </div>
+        <div class="advert-banner bottom-ad">
+            <p>Advert 2: Join as a Dispatch Rider and Earn Extra!</p>
+        </div>
+
+        <div class="container">
+            <h2>Register as a Dispatch Rider</h2>
+            <form method="POST" enctype="multipart/form-data">
+                <label for="name">Name</label>
+                <input type="text" name="name" required>
+
+                <label for="address">Address</label>
+                <input type="text" name="address" required>
+
+                <label for="location">Location</label>
+                <input type="text" name="location" required>
+
+                <label for="email">Email</label>
+                <input type="email" name="email" required>
+
+                <label for="phone">Phone Number</label>
+                <input type="text" name="phone" required>
+
+                <label for="vehicle_type">Vehicle Type</label>
+                <select name="vehicle_type" required>
+                    <option value="Car">Car</option>
+                    <option value="Bike">Bike</option>
+                </select>
+
+                <label for="vehicle_number">Vehicle Number</label>
+                <input type="text" name="vehicle_number" required>
+
+                <label for="vehicle_model">Vehicle Model</label>
+                <input type="text" name="vehicle_model" required>
+
+                <label for="vehicle_color">Vehicle Color</label>
+                <input type="text" name="vehicle_color" required>
+
+                <label for="vehicle_image">Vehicle Image</label>
+                <input type="file" name="vehicle_image" accept="image/*">
+
+                <button type="submit">Register</button>
+            </form>
+        </div>
+
+        <!-- Floating Dispatch Riders Names -->
+        <div class="floating-riders">
+            <h3>Registered Dispatch Riders:</h3>
+            {% if dispatch_riders %}
+                <ul>
+                      {% for rider in dispatch_riders %}
+                            <li>{{ rider.name }}</li>
+                      {% endfor %}
+                </ul>
+            {% else %}
+                <p>No registered dispatch riders found.</p>
+            {% endif %}
+         
+        </div>
+    </div>
+</body>
+</html>

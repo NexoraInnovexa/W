@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Magic Land Storyteller Registration</title>
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Cinzel:wght@600&family=Quicksand:wght@400&display=swap" rel="stylesheet">
+    <style>
+        /* General Styling */
+        body {
+            margin: 0;
+            font-family: 'Quicksand', sans-serif;
+            color: #f4f4f4;
+            background-color: #1e003e;
+        }
+
+        /* Magic Background */
+        .magic-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: radial-gradient(circle at 50% 50%, #1e003e, #040011);
+        }
+
+        .stars {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, #fff 1px, transparent 1px);
+            background-size: 3px 3px;
+            animation: twinkle 3s infinite;
+            z-index: -2;
+        }
+
+        .sparkles {
+            position: absolute;
+            top: 20%;
+            width: 100%;
+            height: 200px;
+            background: url('sparkles.png') repeat-x;
+            opacity: 0.7;
+            z-index: -1;
+            transform: translateY(-100px);
+            animation: float 6s infinite;
+        }
+
+        .floating-islands {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 400px;
+            background: url('islands.png') repeat-x;
+            animation: float 15s infinite;
+            z-index: -3;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-20px);
+            }
+        }
+
+        @keyframes twinkle {
+            0%, 100% {
+                opacity: 0.8;
+            }
+            50% {
+                opacity: 0.5;
+            }
+        }
+
+        /* Header */
+        .magic-header {
+            text-align: center;
+            padding: 60px;
+            background: rgba(255, 204, 102, 0.9);
+            border-bottom: 3px solid #ffba08;
+            color: #3d0066;
+        }
+
+        .animated-title {
+            font-family: 'Cinzel', serif;
+            font-size: 4rem;
+            margin: 0;
+            animation: glowText 3s infinite alternate;
+        }
+
+        .subheading {
+            font-size: 1.5rem;
+            margin-top: 10px;
+            color: #3d0066;
+        }
+
+        @keyframes glowText {
+            from {
+                text-shadow: 0 0 10px #ffba08, 0 0 20px #ffba08;
+            }
+            to {
+                text-shadow: 0 0 30px #ffba08, 0 0 60px #ffba08;
+            }
+        }
+
+        /* Form Section */
+        .magic-form {
+            max-width: 600px;
+            margin: 50px auto;
+            background: rgba(255, 255, 255, 0.15);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+        }
+
+        .magic-form .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-size: 1.2rem;
+            margin-bottom: 5px;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 10px;
+            font-size: 1rem;
+            border-radius: 5px;
+            border: none;
+            background: rgba(255, 255, 255, 0.9);
+            transition: 0.3s;
+        }
+
+        input:focus, select:focus {
+            background: #fff;
+            box-shadow: 0 0 10px #ffba08;
+        }
+
+        .submit-btn {
+            background: linear-gradient(45deg, #ff006e, #8338ec);
+            color: #fff;
+            border: none;
+            padding: 15px 20px;
+            font-size: 1.3rem;
+            text-transform: uppercase;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .submit-btn:hover {
+            background: linear-gradient(45deg, #8338ec, #ff006e);
+            transform: scale(1.1);
+        }
+
+        /* Footer */
+        .magic-footer {
+            text-align: center;
+            padding: 20px;
+            background: rgba(74, 20, 140, 0.8);
+            border-top: 3px solid #ffba08;
+            color: #fff;
+        }
+
+        .login{
+            color:yellow;
+        }
+    </style>
+</head>
+<body>
+    <div class="magic-background">
+        <div class="sparkles"></div>
+        <div class="floating-islands"></div>
+        <div class="stars"></div>
+    </div>
+
+    <header class="magic-header">
+        <h1 class="animated-title">Enter the Magic Land</h1>
+        <p class="subheading">Create your storyteller account and let your imagination run wild.</p>
+    </header>
+
+    <main>
+        <section class="form-section">
+            <form id="storytellerForm" action="/storyteller/register" method="POST" enctype="multipart/form-data" class="magic-form">
+                <div class="form-group">
+                    <label for="pen_name">Pen Name</label>
+                    <input type="text" id="pen_name" name="pen_name" required placeholder="Your magical pen name">
+                </div>
+
+                <div class="form-group">
+                    <label for="specialization">Specialization</label>
+                    <select id="specialization" name="specialization" required>
+                        <option value="">Choose your storytelling genre</option>
+                        <!-- Fictional Genres -->
+                        <optgroup label="Fictional Genres">
+                            <option value="fantasy">Fantasy</option>
+                            <option value="science-fiction">Science Fiction (Sci-Fi)</option>
+                            <option value="horror">Horror</option>
+                            <option value="mystery">Mystery</option>
+                            <option value="thriller">Thriller</option>
+                            <option value="romance">Romance</option>
+                            <option value="comedy">Comedy</option>
+                            <option value="historical-fiction">Historical Fiction</option>
+                            <option value="adventure">Adventure</option>
+                        </optgroup>
+                        <!-- Non-Fiction Genres -->
+                        <optgroup label="Non-Fiction Genres">
+                            <option value="biography">Biography</option>
+                            <option value="autobiography">Autobiography/Memoir</option>
+                            <option value="self-help">Self-Help</option>
+                            <option value="travel">Travel</option>
+                            <option value="true-crime">True Crime</option>
+                        </optgroup>
+                        <!-- Hybrid Genres -->
+                        <optgroup label="Hybrid Genres">
+                            <option value="romantic-comedy">Romantic Comedy (Rom-Com)</option>
+                            <option value="fantasy-romance">Fantasy Romance</option>
+                            <option value="horror-comedy">Horror Comedy</option>
+                            <option value="historical-mystery">Historical Mystery</option>
+                        </optgroup>
+                        <!-- Children’s and Young Adult Genres -->
+                        <optgroup label="Children’s and Young Adult (YA) Genres">
+                            <option value="picture-books">Picture Books</option>
+                            <option value="middle-grade">Middle Grade</option>
+                            <option value="young-adult">Young Adult (YA)</option>
+                        </optgroup>
+                        <!-- Niche and Subgenres -->
+                        <optgroup label="Niche and Subgenres">
+                            <option value="urban-fantasy">Urban Fantasy</option>
+                            <option value="steampunk">Steampunk</option>
+                            <option value="cyberpunk">Cyberpunk</option>
+                            <option value="paranormal-romance">Paranormal Romance</option>
+                            <option value="military-fiction">Military Fiction</option>
+                            <option value="gothic-fiction">Gothic Fiction</option>
+                            <option value="psychological-thriller">Psychological Thriller</option>
+                            <option value="epic">Epic</option>
+                        </optgroup>
+                        <!-- Cultural/Regional Genres -->
+                        <optgroup label="Cultural/Regional Genres">
+                            <option value="magical-realism">Magical Realism</option>
+                            <option value="afrofuturism">Afrofuturism</option>
+                            <option value="folklore-mythology">Folklore/Mythology</option>
+                        </optgroup>
+                        <!-- Specialized Genres -->
+                        <optgroup label="Specialized Genres">
+                            <option value="fan-fiction">Fan Fiction</option>
+                            <option value="dystopian">Dystopian</option>
+                            <option value="post-apocalyptic">Post-Apocalyptic</option>
+                            <option value="noir">Noir</option>
+                        </optgroup>
+                    </select>
+                </div>
+                
+
+                <div class="form-group">
+                    <label for="bank_code">Bank Code</label>
+                    <input type="text" id="bank_code" name="bank_code" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="account_number">Account Number</label>
+                    <input type="text" id="account_number" name="account_number" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="bank_details">Bank Details</label>
+                    <input type="text" id="bank_details" name="bank_details" required placeholder="Your bank account details">
+                </div>
+
+                <div class="form-group">
+                    <label for="email">email</label>
+                    <input type="text" id="email" name="email" required placeholder="Your email">
+                </div>
+
+                <div class="form-group">
+                    <label for="profile_picture">Upload Profile Picture</label>
+                    <input type="file" id="profile_picture" name="profile_picture" accept="image/*" required>
+                </div>
+
+                <div class="form-group">
+                    <button type="submit" class="submit-btn">Register as Storyteller</button>
+                </div>
+
+                <div class="form-group">
+                    <p>Don't have an account? <a href="{{ url_for('routes.storyteller_login') }}" class="login">Login</a></p>
+                </div> 
+            </form>
+        </section>
+    </main>
+
+    <footer class="magic-footer">
+        <p>&copy; 2024 Magic Land. Unlock the gates to your stories!</p>
+    </footer>
+</body>
+</html>

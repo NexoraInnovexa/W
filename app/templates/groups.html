@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Groups</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        /* Global Styles */
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f7fc;
+            color: #333;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        button {
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        /* Dark Mode */
+        body.dark-mode {
+            background-color: #121212;
+            color: #fff;
+        }
+
+        body.dark-mode .group-card {
+            background-color: #1e1e1e;
+        }
+
+        body.dark-mode input, body.dark-mode textarea {
+            background-color: #333;
+            color: #fff;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            margin: 0;
+        }
+
+        .toggle-theme {
+            font-size: 20px;
+            background: none;
+            border: none;
+            color: inherit;
+            cursor: pointer;
+        }
+
+        .toggle-theme:hover {
+            opacity: 0.7;
+        }
+
+        /* Search Bar */
+        .search-bar {
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+        }
+
+        .search-bar input {
+            flex: 1;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .search-bar button {
+            margin-left: 10px;
+        }
+
+        /* Group Grid */
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 2fr));
+            gap: 20px;
+        }
+
+        .group-card {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            transition: background-color 0.3s;
+        }
+
+        .group-card h3 {
+            margin: 0 0 10px;
+        }
+
+        .group-card p {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .group-card .join-button {
+            background-color: #28a745;
+        }
+
+        .group-card .join-button:hover {
+            background-color: #218838;
+        }
+
+        /* Back Button */
+        .back-button {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: #007BFF;
+            font-weight: 500;
+        }
+
+        .back-button:hover {
+            text-decoration: underline;
+        }
+
+        /* Create Group Form */
+        .create-group-form {
+            display: none;
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .create-group-form input, .create-group-form textarea {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .create-group-form button {
+            width: 100%;
+            padding: 12px;
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Your Groups</h1>
+        <button class="toggle-theme" onclick="toggleTheme()">🌙</button>
+    </div>
+
+    <a href="javascript:history.back()" class="back-button">← Go Back</a>
+
+    <!-- Search Bar -->
+    <div class="search-bar">
+        <input type="text" placeholder="Search for a group..." aria-label="Search for groups">
+        <button>Search</button>
+    </div>
+
+    <!-- Create Group Button -->
+    <button onclick="toggleCreateGroupForm()">+ Create New Group</button>
+
+    <!-- Create Group Form -->
+    <div class="create-group-form" id="create-group-form">
+        <h2>Create a New Group</h2>
+        <form id="create-group-form" onsubmit="submitCreateGroup(event)">
+            <input type="text" name="groups_name" placeholder="Group Name" required>
+            <textarea name="description" placeholder="Group Description" rows="4" required></textarea>
+            <button type="submit">Create Group</button>
+        </form>        
+    </div>
+
+    <!-- List of Groups -->
+    <h2>All Groups</h2>
+    <div class="grid-container">
+        {% for groups in groups %}
+        <div class="group-card">
+            <h3>{{ groups.name }}</h3>
+            <p>{{ groups.description }}</p>
+            <form action="{{ url_for('routes.join_group', groups_id=groups.id) }}" method="POST" style="margin-top: 10px;">
+                <button type="submit" class="join-button">Request to Join</button>
+            </form>
+        </div>
+        {% endfor %}
+    </div>
+
+    <script>
+        function toggleTheme() {
+            document.body.classList.toggle('dark-mode');
+            const icon = document.querySelector('.toggle-theme');
+            icon.textContent = document.body.classList.contains('dark-mode') ? '🌞' : '🌙';
+        }
+
+        function toggleCreateGroupForm() {
+            const form = document.getElementById('create-group-form');
+            form.style.display = form.style.display === 'none' || form.style.display === '' ? 'block' : 'none';
+        }
+
+        // Create Group
+        async function submitCreateGroup(event) {
+            event.preventDefault();  // Prevent the default form submission
+        
+            const name = document.querySelector('input[name="groups_name"]').value.trim();
+            const description = document.querySelector('textarea[name="description"]').value.trim();
+        
+            if (!name || !description) {
+                alert('Please fill in both fields.');
+                return;
+            }
+        
+            try {
+                const response = await fetch('/groups/create', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        name: name,
+                        rules: description
+                    })
+                });
+        
+                const result = await response.json();
+        
+                if (response.ok) {
+                    alert('Group created successfully!');
+                    window.location.href = result.redirect_url; // Redirect to the group's admin view
+                } else {
+                    alert(`Error: ${result.error || 'Something went wrong.'}`);
+                }
+            } catch (error) {
+                console.error('Error creating group:', error);
+                alert('Failed to create the group. Please try again later.');
+            }
+        }
+        
+    </script>
+</body>

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Group Chat</title>
+    <script src="https://cdn.socket.io/4.0.1/socket.io.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/css/bootstrap.min.css">
+    <style>
+        #chat-box {
+            height: 400px;
+            overflow-y: scroll;
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-4">
+        <h2>{{ group.name }} Chat Room</h2>
+        <img src="{{ group.profile_picture }}" alt="Group Profile Picture" class="img-fluid rounded mb-3" width="150">
+        <div id="chat-box">
+            <!-- Messages will be dynamically added here -->
+        </div>
+        <form id="chat-form">
+            <div class="input-group">
+                <input type="text" id="message-input" class="form-control" placeholder="Type a message" required>
+                <button type="submit" class="btn btn-primary">Send</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        // Connect to the WebSocket server
+        const socket = io();
+
+        // Group and user details passed from Flask
+        const groupId = "{{ group.id }}";
+        const username = "{{ session['username'] }}";
+
+        // Join the group room
+        socket.emit('join', { group_id: groupId, username });
+
+        // Listen for messages from the server
+        socket.on('message', (data) => {
+            const chatBox = document.getElementById('chat-box');
+            const messageElement = document.createElement('div');
+            const sender = data.username === username ? "You" : data.username;
+            messageElement.textContent = `${sender}: ${data.content}`;
+            chatBox.appendChild(messageElement);
+            chatBox.scrollTop = chatBox.scrollHeight; // Auto-scroll
+        });
+
+        // Send a message
+        document.getElementById('chat-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const messageInput = document.getElementById('message-input');
+            const message = messageInput.value.trim();
+
+            if (message) {
+                socket.emit('message', { group_id: groupId, username, content: message });
+                messageInput.value = ''; // Clear input field
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="https://js.paystack.co/v1/inline.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Ad</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        /* General Styling */
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #007bff;
+            margin: 0;
+            padding: 0;
+            color: #fff;
+        }
+
+        .main-container {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            margin: 20px;
+            gap: 20px;
+        }
+
+        .form-container {
+            width: 60%;
+            background: #ffffff;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            color: #333;
+        }
+
+        .side-panel {
+            width: 30%;
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        h1 {
+            font-size: 28px;
+            color: #007bff;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        form label {
+            font-weight: bold;
+            margin-top: 10px;
+            display: block;
+        }
+
+        input, textarea, select {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        textarea {
+            resize: none;
+        }
+
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        /* Slider Section */
+        .slider {
+            width: 100%;
+            overflow: hidden;
+            position: relative;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .slider-images {
+            display: flex;
+            transition: transform 0.5s ease-in-out;
+        }
+
+        .slider-images img {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+        }
+
+        .slider-controls {
+            position: absolute;
+            top: 50%;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            transform: translateY(-50%);
+        }
+
+        .slider-controls button {
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        /* Side Panel for Advertisements */
+        .ad-box {
+            border: 2px solid #007bff;
+            border-radius: 10px;
+            padding: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .ad-box img {
+            max-width: 100%;
+            border-radius: 10px;
+        }
+
+        .ad-box p {
+            font-size: 14px;
+            margin-top: 10px;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <!-- Form Section -->
+        <div class="form-container">
+            <h1>Create Your Ad</h1>
+
+            <div class="slider">
+                <div class="slider-images" id="sliderImages">
+                    <img src="{{ url_for('static', filename='ad3.png') }}" alt="Ad 1">
+                    <img src="{{ url_for('static', filename='ad4.jpg') }}" alt="Ad 2">
+                    <img src="{{ url_for('static', filename='digital.jpg') }}" alt="Ad 3">
+                </div>
+                <div class="slider-controls">
+                    <button id="prevBtn">&#10094;</button>
+                    <button id="nextBtn">&#10095;</button>
+                </div>
+            </div>
+
+            <form id="adForm" action="/ad/create" method="POST" enctype="multipart/form-data">
+                <input type="hidden" name="user_id" value="{{ user_id }}"> <!-- Add this line -->
+                <label for="title">Ad Title:</label>
+                <input type="text" id="title" name="title" placeholder="Enter your ad title..." required>
+
+                <label for="description">Ad Description:</label>
+                <textarea id="description" name="description" placeholder="Describe your ad..." required></textarea>
+
+                <label for="media">Media File:</label>
+                <input type="file" id="media" name="media" accept="image/png, image/jpeg, video/mp4, video/mkv" required>
+
+                <div id="previewSection">
+                    <img id="adPreview" alt="Media Preview" style="display: none; max-width: 100%; margin-top: 10px;">
+                </div>
+
+                <label for="duration">Duration:</label>
+                <select id="duration" name="duration" required>
+                    <option value="1">1 Day</option>
+                    <option value="7">1 Week</option>
+                    <option value="30">1 Month</option>
+                </select>
+
+                <label for="paymentMethod">Payment Method:</label>
+                <select id="paymentMethod" name="paymentMethod" required>
+                    <option value="paystack">Paystack</option>
+                    <option value="dollar_account">Dollar Account</option>
+                </select>
+
+                
+
+                <label for="paymentAmount">Total Payment (₦):</label>
+                <input type="text" id="paymentAmount" name="paymentAmount" readonly>
+                <button type="submit">Create Ad</button>
+            </form>
+        </div>
+
+        <!-- Side Panel Section -->
+        <div class="side-panel">
+            <h2>Advertisements</h2>
+            <div class="ad-box">
+                <img src="{{ url_for('static', filename='marketing.jpg') }}" alt="Sample Ad">
+                <p>Promote your brand with us!</p>
+            </div>
+            <div class="ad-box">
+                <img src="{{ url_for('static', filename='header-animationoutput.png') }}" alt="Sample Ad">
+                <p>Get premium visibility for your product.</p>
+            </div>
+        </div>
+        
+    </div>
+    <script src="https://js.paystack.co/v1/inline.js"></script>
+    <script>
+        // Slider Logic
+        let sliderIndex = 0;
+        const sliderImages = document.getElementById('sliderImages');
+        const totalImages = sliderImages.children.length;
+    
+        document.getElementById('prevBtn').addEventListener('click', () => {
+            try {
+                sliderIndex = (sliderIndex > 0) ? sliderIndex - 1 : totalImages - 1;
+                updateSlider();
+            } catch (error) {
+                console.error("Error in slider previous button logic:", error);
+            }
+        });
+    
+        document.getElementById('nextBtn').addEventListener('click', () => {
+            try {
+                sliderIndex = (sliderIndex < totalImages - 1) ? sliderIndex + 1 : 0;
+                updateSlider();
+            } catch (error) {
+                console.error("Error in slider next button logic:", error);
+            }
+        });
+    
+        function updateSlider() {
+            try {
+                sliderImages.style.transform = `translateX(-${sliderIndex * 100}%)`;
+            } catch (error) {
+                console.error("Error updating slider:", error);
+            }
+        }
+    
+        // Daily rate logic
+        const DAILY_RATE = 2500; // ₦2,500 per 24 hours
+    
+        function calculatePayment() {
+            try {
+                const duration = parseInt(document.getElementById("duration").value);
+                const totalAmount = duration * DAILY_RATE;
+                document.getElementById("paymentAmount").value = totalAmount;
+            } catch (error) {
+                console.error("Error calculating payment:", error);
+            }
+        }
+    
+        document.getElementById("duration").addEventListener("change", calculatePayment);
+    
+        // Paystack payment function
+        function payWithPaystack(adId, paymentAmount) {
+            try {
+                const handler = PaystackPop.setup({
+                    key: "pk_live_dcabc09fe82e6fb82ee43af5d6d191ced99e0f76",
+                    email: "user@example.com", // Replace with the user's email
+                    amount: paymentAmount * 100, // Convert amount to kobo
+                    currency: "NGN",
+                    ref: `ad_${adId}_${new Date().getTime()}`, // Unique reference
+                    callback: function(response) {
+                        try {
+                            // Verify payment after successful transaction
+                            fetch("/ad/pay", {
+                                method: "POST",
+                                headers: {
+                                    "Content-Type": "application/json"
+                                },
+                                body: JSON.stringify({
+                                    ad_id: adId,
+                                    payment_method: "paystack",
+                                    reference: response.reference
+                                })
+                            })
+                            .then(res => res.json())
+                            .then(data => {
+                                console.log("Payment verification response:", data);
+                                alert(data.message || "Payment verified successfully!");
+                                // Redirect or update the UI after verification
+                                window.location.href = "/payment-success"; // Adjust redirect URL
+                            })
+                            .catch(err => console.error("Error in payment verification:", err));
+                        } catch (error) {
+                            console.error("Error in Paystack callback:", error);
+                        }
+                    },
+                    onClose: function() {
+                        alert("Transaction cancelled.");
+                    }
+                });
+                handler.openIframe();
+            } catch (error) {
+                console.error("Error initializing Paystack payment:", error);
+            }
+        }
+    
+        // PayPal payment function
+        function payWithPayPal(adId, paymentAmount) {
+            try {
+                alert("PayPal payment is under development. Please contact support.");
+            } catch (error) {
+                console.error("Error in PayPal payment logic:", error);
+            }
+        }
+    
+        // Form submission logic with payment handling
+        document.getElementById("adForm").addEventListener("submit", async function(e) {
+            e.preventDefault(); // Prevent default form submission
+            const formData = new FormData(this);
+    
+            try {
+                // Send the form data to the backend
+                const response = await fetch("/ad/create", { method: "POST", body: formData });
+    
+                if (!response.ok) {
+                    const text = await response.text();
+                    console.error("Error in ad creation response:", text);
+                    alert("An error occurred: " + text);
+                    return;
+                }
+    
+                const result = await response.json();
+                console.log("Ad creation response:", result);
+    
+                if (result && result.message) {
+                    alert(result.message); // Ad creation success message
+    
+                    // Handle payment based on the selected method
+                    if (result.payment_method === "paystack") {
+                        payWithPaystack(result.ad_id, result.payment_amount);
+                    } else if (result.payment_method === "dollar_account") {
+                        payWithPayPal(result.ad_id, result.payment_amount);
+                    } else {
+                        alert("Unknown payment method.");
+                    }
+                }
+            } catch (error) {
+                console.error("Error in form submission:", error);
+            }
+        });
+    </script> 
+
+
+</body>
+</html>

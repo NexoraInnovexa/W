@@ -1,0 +1,137 @@
+{% extends 'job_dashboard.html' %}
+
+{% block content %}
+    <div class="container">
+        <h2 class="job-title">Applications for Job: {{ job.title }}</h2>
+        
+        {% if applications %}
+            <ul class="applications-list">
+                {% for application in applications %}
+                    <li class="application-item">
+                        <div class="application-info">
+                            <p><strong>Username:</strong> {{ application.job_seeker.username }}</p>
+                            <p><strong>Message:</strong> {{ application.message }}</p>
+                            <p><strong>Resume:</strong> 
+                                {% if application.resume %}
+                                    <a href="{{ url_for('routes.download_resume', filename=application.resume) }}" class="download-link" target="_blank">Download Resume</a>
+                                {% else %}
+                                    <span class="no-resume">No resume uploaded.</span>
+                                {% endif %}
+                            </p>
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>No applications yet for this job.</p>
+        {% endif %}
+    </div>
+{% endblock %}
+
+{% block styles %}
+    <style>
+        /* Container styling for alignment and padding */
+        .container {
+            width: 80%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+        }
+
+        /* Job title styling */
+        .job-title {
+            font-size: 2em;
+            font-weight: bold;
+            color: #222;
+            margin-bottom: 30px;
+            text-align: center;
+            letter-spacing: 1px;
+        }
+
+        /* Styling for the applications list */
+        .applications-list {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+            overflow-y: auto;
+            max-height: 600px;
+        }
+
+        .application-item {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            padding: 20px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .application-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Application details styling */
+        .application-info p {
+            font-size: 1.1em;
+            color: #555;
+            line-height: 1.5;
+            margin-bottom: 15px;
+        }
+
+        .application-info strong {
+            color: #222;
+            font-weight: bold;
+        }
+
+        /* Styling for the download resume link */
+        .download-link {
+            color: #e74c3c;
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 2px solid #e74c3c;
+            transition: color 0.3s ease;
+        }
+
+        .download-link:hover {
+            color: #d43f00;
+            border-color: #d43f00;
+        }
+
+        /* Styling for no resume uploaded */
+        .no-resume {
+            color: #e74c3c;
+            font-style: italic;
+        }
+
+        /* Styling for empty state (when there are no applications) */
+        p {
+            font-size: 1.2em;
+            color: #666;
+            text-align: center;
+            font-style: italic;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                width: 90%;
+            }
+
+            .job-title {
+                font-size: 1.6em;
+            }
+
+            .application-item {
+                padding: 15px;
+            }
+        }
+
+        /* Smooth scrolling */
+        html {
+            scroll-behavior: smooth;
+        }
+    </style>
+{% endblock %}

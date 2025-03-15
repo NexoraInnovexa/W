@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Event - {{ event.title }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <style>
+        /* General styles */
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #000;
+            color: #fff;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column;
+            overflow: hidden;
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        /* Page title */
+        h1 {
+            font-size: 3rem;
+            color: #d32f2f;
+            margin-bottom: 20px;
+            text-align: center;
+            animation: slideIn 1s ease-in-out;
+        }
+
+        /* Form container */
+        .form-container {
+            background-color: #222;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            width: 90%;
+            max-width: 500px;
+            text-align: center;
+            animation: zoomIn 1s ease-in-out;
+        }
+
+        .form-container label {
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+            display: block;
+            color: #d32f2f;
+        }
+
+        .form-container input[type="datetime-local"],
+        .form-container textarea {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 20px;
+            border: 2px solid #444;
+            border-radius: 8px;
+            background-color: #333;
+            color: #fff;
+            font-size: 1rem;
+        }
+
+        .form-container input[type="datetime-local"]:focus,
+        .form-container textarea:focus {
+            outline: none;
+            border-color: #d32f2f;
+        }
+
+        /* Submit button */
+        .form-container button {
+            background-color: #d32f2f;
+            color: white;
+            padding: 12px 20px;
+            font-size: 1.1rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            width: 100%;
+            margin-top: 20px;
+            box-sizing: border-box;
+        }
+
+        .form-container button:hover {
+            background-color: #b71c1c;
+        }
+
+        /* Back link */
+        .back-link {
+            margin-top: 20px;
+            color: #d32f2f;
+            text-decoration: none;
+            font-size: 1.2rem;
+            transition: color 0.3s ease;
+        }
+
+        .back-link:hover {
+            color: #b71c1c;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes zoomIn {
+            from {
+                transform: scale(0.8);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.5rem;
+            }
+
+            .form-container {
+                width: 90%;
+            }
+
+            .form-container button {
+                padding: 10px 18px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 2rem;
+            }
+
+            .form-container {
+                padding: 20px;
+            }
+
+            .form-container input[type="datetime-local"],
+            .form-container textarea {
+                font-size: 0.9rem;
+            }
+
+            .form-container button {
+                font-size: 1rem;
+                padding: 10px 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Book Your Spot for {{ event.title }}</h1>
+
+    <div class="form-container">
+        <form method="POST">
+            <div>
+                <label for="booking_date">Choose a Date and Time:</label>
+                <input type="datetime-local" id="booking_date" name="booking_date" required>
+            </div>
+
+            <div>
+                <label for="special_notes">Special Notes (Optional):</label>
+                <textarea id="special_notes" name="special_notes"></textarea>
+            </div>
+
+            <button type="submit">Book Event</button>
+        </form>
+
+        <a href="{{ url_for('routes.all_events') }}" class="back-link">Events</a>
+    </div>
+
+</body>
+</html>

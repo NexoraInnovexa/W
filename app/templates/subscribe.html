@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Subscribe to Premium</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            max-width: 500px;
+            width: 100%;
+        }
+
+        h1 {
+            text-align: center;
+            color: #4CAF50;
+        }
+
+        .details {
+            margin: 20px 0;
+            font-size: 16px;
+        }
+
+        .button {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            background-color: #4CAF50;
+            color: white;
+            text-align: center;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 18px;
+            transition: background-color 0.3s;
+        }
+
+        .button:hover {
+            background-color: #45a049;
+        }
+
+        .error-message {
+            color: red;
+            text-align: center;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Premium Subscription</h1>
+        <div class="details">
+            <p>Get premium access for just <strong>&#8358;10,000/month</strong> to unlock all features.</p>
+            <p>To proceed, click the button below to pay securely.</p>
+        </div>
+        <!-- Button to initiate the payment -->
+        <a href="#" id="payment-btn" class="button">Subscribe Now</a>
+
+        <div class="error-message" id="error-message"></div>
+    </div>
+
+    <script>
+        // Handling subscription logic with JavaScript
+        document.getElementById('payment-btn').addEventListener('click', function(event) {
+            event.preventDefault();  // Prevent default link behavior
+
+            // Send a GET request to the /subscribe route to get the payment URL
+            fetch('/subscribe', {
+                method: 'GET',
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.payment_url) {
+                    // Redirect the user to the Paystack payment page
+                    window.location.href = data.payment_url;
+                } else if (data.error) {
+                    // Show an error message if something goes wrong
+                    document.getElementById('error-message').innerText = data.error;
+                }
+            })
+            .catch(error => {
+                // Handle network or other errors
+                document.getElementById('error-message').innerText = 'There was an issue with the payment process. Please try again.';
+            });
+        });
+    </script>
+</body>
+</html>

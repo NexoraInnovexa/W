@@ -1,0 +1,6 @@
+<h1>Registered Investors</h1>
+<ul>
+    {% for investor in investors %}
+    <li>{{ investor.name }} - {{ investor.preferences }}</li>
+    {% endfor %}
+</ul>

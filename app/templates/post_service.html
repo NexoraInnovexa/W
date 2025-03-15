@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Jobs</title>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <style>
+        /* General Styles */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .navbar {
+            background-color: #fff;
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .navbar .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: black;
+            text-decoration: none;
+        }
+
+        .nav-links, .nav-icons {
+            list-style: none;
+            display: flex;
+            gap: 20px;
+        }
+
+        .nav-links a, .nav-icons a {
+            color: black;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .nav-links a:hover, .nav-icons a:hover {
+            color: #b71c1c;
+        }
+
+        .container {
+            flex-grow: 1;
+            display: flex;
+            gap: 20px;
+            padding: 20px;
+            flex-wrap: wrap;
+        }
+
+        .sidebar, .right-sidebar, .main-content {
+            background-color: #ffffff;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .sidebar, .right-sidebar {
+            width: 220px;
+        }
+
+        .sidebar h3, .right-sidebar h3, .main-content h2 {
+            color: #d32f2f;
+            margin-bottom: 10px;
+        }
+
+        .main-content {
+            flex: 1;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        form input, form textarea {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        form button {
+            background-color: #d32f2f;
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        form button:hover {
+            background-color: #b71c1c;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        ul li {
+            margin-bottom: 10px;
+        }
+
+        ul li a {
+            text-decoration: none;
+            color: #007bff;
+        }
+
+        ul li a:hover {
+            text-decoration: underline;
+        }
+
+        .footer {
+            background-color: #000;
+            color: #fff;
+            text-align: center;
+            padding: 10px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .sidebar, .right-sidebar {
+                width: 100%;
+            }
+
+            .container {
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+        }
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #ff5733;
+            min-width: 160px;
+            z-index: 1;
+            padding: 12px;
+            border-radius: 5px;
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        .dropdown-content a {
+            color: white;
+            text-decoration: none;
+            display: block;
+            padding: 8px 12px;
+            font-size: 1.2rem;
+        }
+
+        .dropdown-content a:hover {
+            background-color: #e04e29;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <a href="{{ url_for('routes.dashboard') }}" class="logo">W</a>
+        <ul class="nav-links">
+            <li><a href="{{ url_for('routes.job_dashboard') }}"><i class="fas fa-briefcase"></i> Job Dashboard</a></li>
+            <li><a href="{{ url_for('routes.view_jobs') }}"><i class="fas fa-briefcase"></i> View Jobs</a></li>
+            <li><a href="{{ url_for('routes.view_services') }}"><i class="fas fa-tools"></i> View Services</a></li>
+            <li><a href="{{ url_for('routes.post_job') }}"><i class="fas fa-plus"></i> Post Job</a></li>
+            <li><a href="{{ url_for('routes.post_service') }}"><i class="fas fa-plus-circle"></i> Post Service</a></li>
+            <li><a href="{{ url_for('routes.logout') }}"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+        </ul>
+        <div class="nav-search">
+            <input type="text" placeholder="Search..." aria-label="Search" style="padding: 5px; border-radius: 5px;">
+            <a href="#"><i class="fas fa-search"></i></a>
+        </div>
+        <div class="dropdown">
+            <a href="#"><i class="fas fa-calendar-alt"></i></a>
+            <div class="dropdown-content">
+                <a href="{{ url_for('routes.create_event') }}">Create Event</a>
+                <a href="{{ url_for('routes.all_events') }}">View Events</a>
+
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Layout -->
+    <div class="container">
+        <!-- Left Sidebar -->
+        <aside class="sidebar">
+            <h3>Services</h3>
+            <ul>
+                <li><a href="{{ url_for('routes.view_services') }}"><i class="fas fa-tools"></i> View all Services</a></li>
+                <li><a href="{{ url_for('view_service_requests') }}"><i class="fas fa-envelope"></i> Service Requests</a></li>
+                <li><a href="{{ url_for('routes.post_service') }}"><i class="fas fa-plus-circle"></i> Post Service</a></li>
+            </ul>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <h2>Post a Service</h2>
+            <form method="POST">
+                <label for="title">Service Title:</label>
+                <input type="text" id="title" name="title" placeholder="Enter service title" required>
+
+                <label for="description">Service Description:</label>
+                <textarea id="description" name="description" placeholder="Describe your service" rows="4" required></textarea>
+
+                <label for="tags">Tags (comma-separated):</label>
+                <input type="text" id="tags" name="tags" placeholder="e.g., design, development" required>
+
+                <label for="price">Price:</label>
+                <input type="number" id="price" name="price" placeholder="Enter price in USD" required>
+
+                <button type="submit">Post Service</button>
+            </form>
+
+            <h2>Service Requests</h2>
+            <ul class="service-list">
+                {% for service in services %}
+                <li class="service-item">
+                    <h3>{{ service.title }}</h3>
+                    <p>{{ service.description }}</p>
+                    <p><strong>Price:</strong> ${{ service.price }}</p>
+                    <p><strong>Tags:</strong> {{ service.tags }}</p>
+                    <a href="{{ url_for('view_service_requests', service_id=service.id) }}" class="btn-link">View Requests</a>
+                </li>
+                {% endfor %}
+            </ul>
+        </main>
+
+        <!-- Right Sidebar -->
+        <aside class="right-sidebar">
+            <h3>Popular Services</h3>
+            <ul>
+                <li><a href="#">Web Development</a></li>
+                <li><a href="#">Graphic Design</a></li>
+                <li><a href="#">SEO Optimization</a></li>
+            </ul>
+
+            <h3>Popular Jobs</h3>
+            <ul>
+                <li><a href="#">Software Engineer</a></li>
+                <li><a href="#">Product Manager</a></li>
+                <li><a href="#">Data Scientist</a></li>
+            </ul>
+        </aside>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>&copy; 2024 W - All Rights Reserved</p>
+    </footer>
+</body>
+</html>

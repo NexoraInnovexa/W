@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Business Idea Market Survey</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #000;
+            margin: 0;
+            padding: 0;
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .container {
+            max-width: 800px;
+            width: 100%;
+            margin: 20px;
+            background: #fff;
+            color: #333;
+            border-radius: 10px;
+            padding: 40px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            overflow-y: auto;
+            max-height: 90vh;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 28px;
+            color: #333;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 16px;
+            color: #34495e;
+            font-weight: 600;
+        }
+
+        .form-group input, .form-group textarea, .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #bdc3c7;
+            border-radius: 6px;
+            font-size: 14px;
+            margin-top: 5px;
+            background-color: #ecf0f1;
+            transition: all 0.3s ease-in-out;
+        }
+
+        .form-group input:focus, .form-group textarea:focus, .form-group select:focus {
+            border-color: #3498db;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(52, 152, 219, 0.2);
+        }
+
+        .form-group button {
+            width: 100%;
+            padding: 15px;
+            background-color: #000;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease-in-out;
+        }
+
+        .form-group button:hover {
+            background-color: #333;
+        }
+
+        .result {
+            display: none;
+            margin-top: 40px;
+            padding: 20px;
+            background: #ecf0f1;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            animation: fadeIn 0.5s ease;
+        }
+
+        .result h3 {
+            font-size: 22px;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+
+        .result p {
+            font-size: 16px;
+            margin: 8px 0;
+            line-height: 1.6;
+        }
+
+        .result p strong {
+            color: #2980b9;
+        }
+
+        .result .button-container {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+
+        .result .button-container button {
+            width: 48%;
+            padding: 12px;
+            background-color: #3498db;
+            border-radius: 6px;
+            color: #fff;
+            border: none;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .result .button-container button:hover {
+            background-color: #2980b9;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        /* Rotational loader styles */
+        .loader {
+            border: 8px solid #f3f3f3;
+            border-top: 8px solid #3498db;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 2s linear infinite;
+            margin: auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+
+            .result .button-container button {
+                width: 100%;
+                margin-top: 10px;
+            }
+        }
+
+        .custom-button {
+            background-color: #000;
+            color: #fff;
+            border: none;
+            padding: 12px 20px;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .custom-button:hover, .custom-button:focus {
+            background-color: #333;
+        }
+
+        .custom-button:active {
+            background-color: #555;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Business Idea Market Survey</h1>
+
+        <!-- Survey Form -->
+        <form id="business-idea-form" method="POST" action="/predict_idea">
+            {{ form.hidden_tag() }}
+            <div class="form-group">
+                <label for="idea">Business Idea</label>
+                {{ form.idea(id="idea") }}
+            </div>
+            <div class="form-group">
+                <label for="industry">Industry</label>
+                {{ form.industry(id="industry") }}
+            </div>
+            <div class="form-group">
+                <label for="targetMarket">Target Market</label>
+                {{ form.targetMarket(id="targetMarket") }}
+            </div>
+            <div class="form-group">
+                <label for="competition">Competition</label>
+                {{ form.competition(id="competition") }}
+            </div>
+            <button type="submit" class="custom-button">Analyze</button>
+        </form>
+
+        <!-- Rotational Loader -->
+        <div id="loader" class="loader" style="display:none;"></div>
+
+        <!-- Survey Results -->
+        <div class="result" id="result">
+            <h3>Your Business Idea Analysis</h3>
+            <h3>Trends Analysis:</h3>
+            <p id="success-prediction"></p>
+            <p id="market-opportunity"></p>
+            <p id="pitfalls"></p>
+            <p id="strengths"></p>
+            <p id="sentiment"></p>
+            <p id="trendsAnalysis"></p>
+            <p id="competitorAnalysis"></p>
+
+            <div class="button-container">
+                <button id="analyze-again">Analyze Again</button>
+                <button id="go-back">Go Back</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('business-idea-form').addEventListener('submit', async function (event) {
+            event.preventDefault();
+
+            // Show the loader
+            document.getElementById('loader').style.display = 'block';
+            document.getElementById('result').style.display = 'none';
+
+            const formData = new FormData(event.target);
+            const data = Object.fromEntries(formData.entries());
+
+            try {
+                const response = await fetch('/predict_idea', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data),
+                });
+
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.error || 'An unexpected error occurred.');
+                }
+
+                const result = await response.json();
+                displayResult(result);
+            } catch (error) {
+                alert(`Error: ${error.message}`);
+            } finally {
+                // Hide the loader after the result is displayed
+                document.getElementById('loader').style.display = 'none';
+            }
+        });
+
+        function displayResult(result) {
+            const resultContainer = document.getElementById('result');
+            resultContainer.style.display = 'block';
+
+            // Display the results here (same as your original code)
+            document.getElementById('success-prediction').textContent = result.success ? 'Your business idea is likely to succeed!' : 'Your business idea may face challenges.';
+            document.getElementById('market-opportunity').textContent = `Market Opportunity: ${result.marketOpportunity}`;
+            document.getElementById('pitfalls').textContent = `Potential Pitfalls: ${result.pitfalls.length > 0 ? result.pitfalls.join(', ') : 'None'}`;
+            document.getElementById('strengths').textContent = `Strengths: ${result.strengths.length > 0 ? result.strengths.join(', ') : 'None'}`;
+            document.getElementById('sentiment').textContent = `Sentiment: ${result.sentiment}`;
+            
+            if (typeof result.trendsAnalysis === 'object') {
+                const trends = Object.entries(result.trendsAnalysis).map(([key, value]) => `${key}: ${value}`).join(', ');
+                document.getElementById('trendsAnalysis').textContent = `Trends Analysis: ${trends}`;
+            } else {
+                document.getElementById('trendsAnalysis').textContent = `Trends Analysis: ${result.trendsAnalysis}`;
+            }
+
+            document.getElementById('competitorAnalysis').textContent = `Competitor Analysis: ${result.competitorAnalysis}`;
+        }
+
+        document.getElementById('analyze-again').addEventListener('click', function () {
+            document.getElementById('business-idea-form').reset();
+            document.getElementById('result').style.display = 'none';
+        });
+
+        document.getElementById('go-back').addEventListener('click', function () {
+            window.history.back();
+        });
+    </script>
+</body>
+</html>

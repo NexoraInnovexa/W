@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Story</title>
+    <style>
+        body {
+            font-family: 'Georgia', serif;
+            background: url('https://your-image-path.com/fantasy-background.jpg') no-repeat center center fixed;
+            background-size: cover;
+            color: #fff;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            background: rgba(0, 0, 0, 0.7);
+            padding: 50px;
+            border-radius: 15px;
+            box-shadow: 0px 0px 25px rgba(255, 215, 0, 0.5);
+            width: 500px;
+            text-align: center;
+            border: 3px solid #FFD700;
+            height: auto;
+        }
+
+        h1 {
+            font-size: 36px;
+            font-weight: bold;
+            color: #FFD700;
+            text-shadow: 2px 2px 10px rgba(255, 215, 0, 0.5);
+            margin-bottom: 20px;
+        }
+
+        label {
+            font-size: 18px;
+            color: #F5F5F5;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        input[type="text"],
+        textarea,
+        select,
+        input[type="file"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            background: #333;
+            border: 1px solid #FFD700;
+            border-radius: 8px;
+            color: #fff;
+            font-size: 16px;
+            outline: none;
+        }
+
+        input[type="text"]:focus,
+        textarea:focus,
+        select:focus,
+        input[type="file"]:focus {
+            border-color: #FF1493;
+        }
+
+        textarea {
+            height: 150px;
+            resize: none;
+        }
+
+        button[type="submit"] {
+            background: linear-gradient(45deg, #FFD700, #FF1493);
+            border: none;
+            padding: 12px 25px;
+            color: white;
+            font-size: 18px;
+            border-radius: 8px;
+            cursor: pointer;
+            box-shadow: 0px 0px 15px rgba(255, 215, 0, 0.5);
+            transition: background 0.3s ease;
+        }
+
+        button[type="submit"]:hover {
+            background: linear-gradient(45deg, #FF1493, #FFD700);
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 20px;
+            color: #FFD700;
+            font-size: 18px;
+            text-decoration: none;
+            border: 2px solid #FFD700;
+            padding: 8px 15px;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+
+        .back-link:hover {
+            background: #FFD700;
+            color: #000;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Edit Story</h1>
+        <form method="POST" action="/edit/story/{{ story.id }}">
+            <div class="form-group">
+                <label for="title">Title:</label>
+                <input type="text" id="title" name="title" value="{{ story.title }}" required>
+            </div>
+
+            <div class="form-group">
+                <label for="content">Content:</label>
+                <textarea id="content" name="content" rows="10" required>{{ story.content }}</textarea>
+            </div>
+
+            <button type="submit">Save Changes</button>
+        </form>
+        <a href="/storyteller/dashboard" class="back-link">Go Back</a>
+    </div>
+</body>
+</html>
