@@ -166,7 +166,7 @@
 
 
     <div class="dashboard">
-        <!-- Left Sidebar -->
+        <!-- Left Column -->
         <div class="menu">
             <button><i class="fa fa-home"></i> Home</button>
             <a href="{{ url_for('routes.explore') }}">
@@ -182,23 +182,34 @@
             <a href="{{ url_for('routes.edit_profile') }}">
                 <button><i class="fa fa-user"></i> Profile</button>
             </a>
-            <button><i class="fa fa-bullhorn"></i> Ads</button>
+            <a href="{{ url_for('routes.ad') }}">
+                <button><i class="fa fa-bullhorn"></i> Ads</button>
+            </a>    
             <button><i class="fa fa-crown"></i> Premium</button>
             <button><i class="fa fa-paint-brush"></i> Artistries</button>
+            <a href="{{ url_for('routes.story') }}">
+                <button><i class="fa fa-book"></i>Storyland</button>
+            </a>
             <button><i class="fa fa-chart-line"></i> Analytics</button>
-            <button><i class="fa fa-users"></i> Groups</button>
+            <a href="{{ url_for('routes.groups') }}">
+                <button><i class="fa fa-users"></i> Groups</button>
+            </a>  
+            <a href="{{ url_for('routes.startup_toolkit') }}">
+                <button><i class="fa fa-briefcase"></i>Startup Toolkit</button>
+            </a>      
             <button><i class="fa fa-paw"></i> Pets</button>
             <button><i class="fa fa-cogs"></i> Settings</button>
             <a href="{{ url_for('routes.all_events') }}">
                 <button><i class="fa fa-calendar-alt"></i>Events</button>
             </a>
-            <button id="job-dashboard-btn"><i class="fa fa-briefcase"></i> Jobs & Services</button>   
+            <a href="{{ url_for('routes.job') }}">
+                <button><i class="fa fa-briefcase"></i> Jobs & Services</button>   
             <button><i class="fa fa-plus-circle"></i> Create Post</button>
             <div id="job-dashboard-content" style="display:none;">
                 <!-- Content will be inserted here -->
             </div>
         </div>
-
+        
         <!-- Explore Center Content -->
         <div class="explore">
             <div class="submenu">
