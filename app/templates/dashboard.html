@@ -435,126 +435,7 @@
     .bottom-nav a:hover {
         color: #ff4757; /* Color change on hover */
     }
-
-    .trending, .suggestions {
-        display: block; /* Ensure visibility */
-        width: 100%; /* Full width */
-        padding: 10px;
-        background: #fff;
-        margin-top: 20px;
-    }
-
-    .trending h3, .suggestions h3 {
-        font-size: 18px;
-        margin-bottom: 10px;
-    }
-
-    .trending ul, .suggestions ul {
-        list-style: none;
-        padding: 0;
-    }
-
-    .trending ul li, .suggestions ul li {
-        padding: 5px 0;
-        border-bottom: 1px solid #ddd;
-    }
-
-
-    /* Mobile Header */
-    .mobile-header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 10px;
-        background: #fff;
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        z-index: 1000;
-    }
-    
-    .mobile-header button {
-        background: none;
-        border: none;
-        font-size: 24px;
-        cursor: pointer;
-        color: #333;
-    }
-    
-    /* Side Navigation */
-    .side-nav {
-        position: fixed;
-        top: 0;
-        left: -250px;
-        width: 250px;
-        height: 100%;
-        background: #fff;
-        box-shadow: 2px 0 5px rgb(255, 255, 255);
-        transition: left 0.3s ease-in-out;
-        padding: 20px;
-        display: flex;
-        flex-direction: column;
-        z-index: 1100;
-    }
-    
-    .side-nav a, .side-nav button {
-        text-decoration: none;
-        padding: 10px 15px;
-        font-size: 18px;
-        color: #333;
-        display: flex;
-        align-items: center;
-        border: none;
-        background: none;
-        cursor: pointer;
-        width: 100%;
-    }
-    
-    .side-nav a:hover, .side-nav button:hover {
-        background:rgb(0, 0, 0);
-        border-radius: 5px;
-    }
-    
-    .side-nav i {
-        margin-right: 10px;
-    }
-    
-    /* Close Button */
-    #close-menu {
-        font-size: 20px;
-        margin-bottom: 10px;
-        align-self: flex-end;
-        background: none;
-        border: none;
-        cursor: pointer;
-    }
-    
-    /* Overlay */
-    #overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0, 0, 0, 0.5);
-        display: none;
-        z-index: 1050;
-    }
-    
-    /* Show menu */
-    .show-menu {
-        left: 0;
-    }
-    
-    /* Show overlay */
-    .show-overlay {
-        display: block;
-    }
-     
 }
-
 
     </style>
 </head>
@@ -612,37 +493,6 @@
                 <!-- Content will be inserted here -->
             </div>
         </div>
-
-        <!-- Mobile Top Navigation -->
-<div class="mobile-header">
-    <button id="menu-toggle">
-        <i class="fa fa-bars"></i> <!-- Hamburger icon -->
-    </button>
-    <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo">
-</div>
-
-<!-- Side Navigation Drawer -->
-<div id="side-nav" class="side-nav">
-    <button id="close-menu"><i class="fa fa-times"></i></button>
-    <a href="{{ url_for('routes.dashboard') }}"><i class="fa fa-home"></i> Home</a>
-    <a href="{{ url_for('routes.explore') }}"><i class="fa fa-compass"></i> Explore</a>
-    <a href="{{ url_for('routes.messages') }}"><i class="fa fa-envelope"></i> Messages</a>
-    <a href="{{ url_for('routes.marketplace') }}"><i class="fa fa-store"></i> Marketplace</a>
-    <a href="{{ url_for('routes.edit_profile') }}"><i class="fa fa-user"></i> Profile</a>
-    <a href="{{ url_for('routes.ad') }}"><i class="fa fa-bullhorn"></i> Ads</a>
-    <a href="{{ url_for('routes.story') }}"><i class="fa fa-book"></i> Stories</a>
-    <a href="{{ url_for('routes.groups') }}"><i class="fa fa-users"></i> Groups</a>
-    <a href="{{ url_for('routes.startup_toolkit') }}"><i class="fa fa-briefcase"></i> Startup Toolkit</a>
-    <a href="{{ url_for('routes.all_events') }}"><i class="fa fa-calendar-alt"></i> Events</a>
-    <a href="{{ url_for('routes.job') }}"><i class="fa fa-briefcase"></i> Jobs</a>
-    <button><i class="fa fa-chart-line"></i> Analytics</button>
-    <button><i class="fa fa-cogs"></i> Settings</button>
-    <button><i class="fa fa-plus-circle"></i> More</button>
-</div>
-
-<!-- Dark overlay when menu is open -->
-<div id="overlay"></div>
-
         
 
        <!-- Ads Section -->
@@ -692,27 +542,43 @@
             <a href="{{ url_for('routes.explore') }}">
                 <button><i class="fa fa-compass"></i></button>
             </a>
-            
+            <button><i class="fa fa-bell"></i></button>
+            <a href="{{ url_for('routes.messages') }}">
+               <button><i class="fa fa-envelope"></i></button>
+            </a>   
             <a href="{{ url_for('routes.marketplace') }}">
                <button><i class="fa fa-store"></i></button>
             </a>   
-            <button><i class="fa fa-plus-circle"></i></button>
-            
+            <a href="{{ url_for('routes.edit_profile') }}">
+                <button><i class="fa fa-user"></i></button>
+            </a>
+            <a href="{{ url_for('routes.ad') }}">
+                <button><i class="fa fa-bullhorn"></i></button>
+            </a>    
+            <button><i class="fa fa-crown"></i></button>
+            <button><i class="fa fa-paint-brush"></i></button>
+            <a href="{{ url_for('routes.story') }}">
+                <button><i class="fa fa-book"></i></button>
+            </a>
+            <button><i class="fa fa-chart-line"></i></button>
+            <a href="{{ url_for('routes.groups') }}">
+                <button><i class="fa fa-users"></i></button>
+            </a>  
             <a href="{{ url_for('routes.startup_toolkit') }}">
                 <button><i class="fa fa-briefcase"></i></button>
             </a>      
+            <button><i class="fa fa-paw"></i> Pets</button>
             <button><i class="fa fa-cogs"></i></button>
             <a href="{{ url_for('routes.all_events') }}">
                 <button><i class="fa fa-calendar-alt"></i></button>
             </a>
             <a href="{{ url_for('routes.job') }}">
-                <button><i class="fa fa-briefcase"></i></button>   
+                <button><i class="fa fa-briefcase"></i> Jobs & Services</button>   
+            <button><i class="fa fa-plus-circle"></i></button>
             <div id="job-dashboard-content" style="display:none;">
                 <!-- Content will be inserted here -->
             </div>
 </div>
-
-  
 
  
 
@@ -839,33 +705,6 @@
             // This could open your chat interface or pop-up
             alert('Open chat interface!');
         });
-
-
-        document.addEventListener("DOMContentLoaded", function() {
-            const menuToggle = document.getElementById("menu-toggle");
-            const closeMenu = document.getElementById("close-menu");
-            const sideNav = document.getElementById("side-nav");
-            const overlay = document.getElementById("overlay");
-        
-            // Open Menu
-            menuToggle.addEventListener("click", function() {
-                sideNav.classList.add("show-menu");
-                overlay.classList.add("show-overlay");
-            });
-        
-            // Close Menu
-            closeMenu.addEventListener("click", function() {
-                sideNav.classList.remove("show-menu");
-                overlay.classList.remove("show-overlay");
-            });
-        
-            // Close Menu when clicking outside
-            overlay.addEventListener("click", function() {
-                sideNav.classList.remove("show-menu");
-                overlay.classList.remove("show-overlay");
-            });
-        });
-        
     </script>
 </body>
 </html>
