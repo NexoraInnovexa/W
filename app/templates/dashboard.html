@@ -6,208 +6,339 @@
     <title>Dashboard</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        /* Twitter-Like UI Styles */
+        /* Global Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-/* Global Reset */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+        }
 
-body {
-    font-family: 'Helvetica Neue', Arial, sans-serif;
-    background-color: #f5f8fa;
-    color: #14171a;
-    display: flex;
-    justify-content: center;
-}
+        /* Header */
+        header {
+            width: 100%;
+            height: 60px;
+            background-color: #333;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 0 20px;
+            position: relative;
+        }
 
-.container {
-    display: flex;
-    width: 100%;
-    max-width: 1200px;
-}
+        header h1 {
+            font-size: 18px;
+            animation: textFade 2s infinite;
+            text-align: center;
+        }
 
-/* Left Sidebar */
-.sidebar-left {
-    width: 250px;
-    height: 100vh;
-    background: #ffffff;
-    border-right: 1px solid #e1e8ed;
-    padding: 20px;
-    position: fixed;
-    left: 0;
-}
+        header img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            position: absolute;
+            right: 20px;
+        }
 
-.sidebar-left nav {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-}
+        @keyframes textFade {
+            0% { opacity: 0.5; }
+            50% { opacity: 1; }
+            100% { opacity: 0.5; }
+        }
 
-.sidebar-left a {
-    text-decoration: none;
-    color: #14171a;
-    font-size: 20px;
-    font-weight: bold;
-    padding: 10px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    border-radius: 25px;
-    transition: background 0.3s;
-}
+        /* Layout */
+        .dashboard {
+            display: flex;
+            width: 100%;
+            height: calc(100vh - 60px);
+            overflow: hidden;
+        }
 
-.sidebar-left a:hover {
-    background: #e8f5fe;
-    color: #1da1f2;
-}
+        /* Left Column */
+        .menu {
+            width: 20%;
+            background-color: #ffffff;
+            border-right: 1px solid #ddd;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            overflow-y: auto;
+        }
 
-/* Feed Section */
-.feed {
-    width: 600px;
-    margin-left: 260px;
-    padding: 20px;
-    border-right: 1px solid #e1e8ed;
-}
+        .menu button {
+            background-color: transparent;  /* No background */
+            color: black; /* Text color black */
+            border: none;
+            border-radius: 5px;
+            padding: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .menu button:hover {
+            background-color: darkred;
+        }
 
-.feed-header {
-    font-size: 20px;
-    font-weight: bold;
-    padding: 15px 0;
-    border-bottom: 1px solid #e1e8ed;
-    background: white;
-    position: sticky;
-    top: 0;
-    z-index: 10;
-}
+        /* Center Column */
+        .feed {
+            width: 60%;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
 
-.post-box {
-    background: white;
-    border: 1px solid #e1e8ed;
-    border-radius: 10px;
-    padding: 15px;
-    margin: 10px 0;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
+        /* For You & Following Tabs */
+        .tabs {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
 
-.post-box textarea {
-    border: none;
-    resize: none;
-    width: 100%;
-    font-size: 16px;
-}
+        .tabs button {
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 10px 20px;
+            cursor: pointer;
+            font-weight: bold;
+            color: #333;
+        }
 
-.post-box-actions {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-top: 10px;
-}
+        .tabs button.active {
+            background-color: red;
+            color: white;
+            border-color: red;
+        }
 
-.post-box-actions button {
-    background: #1da1f2;
-    color: white;
-    border: none;
-    padding: 8px 15px;
-    border-radius: 20px;
-    font-weight: bold;
-    cursor: pointer;
-}
+        .tabs button:hover {
+            background-color: #f5d3d3;
+        }
 
-.post-box-actions button:hover {
-    background: #0d8de0;
-}
+        .post-box {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 15px;
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
 
-/* Posts */
-.post {
-    background: white;
-    padding: 15px;
-    border-bottom: 1px solid #e1e8ed;
-    display: flex;
-    gap: 10px;
-}
+        .post-box-top {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
 
-.post img {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-}
+        .post-box img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+        }
 
-.post-content {
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-}
+        .post-box textarea {
+            width: 250%;
+            border: none;
+            resize: none;
+            height:100px;
+            padding: 10px;
+            border-radius: 5px;
+            background: #f9f9f9;
+        }
 
-.post-actions {
-    display: flex;
-    gap: 20px;
-    color: #657786;
-    font-size: 14px;
-    cursor: pointer;
-}
+        .post-box-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 10px;
+        }
 
-.post-actions i:hover {
-    color: #1da1f2;
-}
+        .post-box-actions .icons {
+            display: flex;
+            gap: 15px;
+            font-size: 18px;
+            color: #555;
+        }
 
-/* Right Sidebar */
-.sidebar-right {
-    width: 300px;
-    height: 100vh;
-    padding: 20px;
-    background: #ffffff;
-    position: fixed;
-    right: 0;
-    border-left: 1px solid #e1e8ed;
-}
+        .post-box-actions .icons i {
+            cursor: pointer;
+            transition: color 0.3s;
+        }
 
-.search-box input {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #e1e8ed;
-    border-radius: 20px;
-    background: #f5f8fa;
-    font-size: 14px;
-}
+        .post-box-actions .icons i:hover {
+            color: red;
+        }
 
-/* Responsive Design */
-@media (max-width: 1024px) {
-    .sidebar-right {
-        display: none;
-    }
-    .feed {
-        margin-left: 260px;
-        width: calc(100% - 260px);
-    }
-}
+        .post-box-top button {
+            background-color: red;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 10px 15px;
+            cursor: pointer;
+            flex: left;
+        }
 
-@media (max-width: 768px) {
-    .sidebar-left {
-        width: 60px;
-    }
-    .feed {
-        margin-left: 70px;
-        width: calc(100% - 70px);
-    }
-    .sidebar-left a span {
-        display: none;
-    }
-}
+        .posts .post {
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            padding: 15px;
+        }
 
-@media (max-width: 480px) {
-    .sidebar-left {
-        display: none;
-    }
-    .feed {
-        margin-left: 0;
-        width: 100%;
-    }
-}
+        .post .user {
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        .post .content {
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            padding: 15px;
+            width: 80%; /* Center the post */
+            text-align: center; /* Center text */
+        }
+
+        .post .actions button {
+            background: none;
+            border: none;
+            color: red;
+            cursor: pointer;
+            
+        }
+
+        .post .actions{
+            display: flex;
+            gap: 25px;
+            font-size: 20px;
+            color:  #ff0000;
+            display: flex;
+            cursor: pointer;
+            transition: color 0.3s;
+             
+        }
+
+        .post-box-actions .comment-box {
+            display: none;
+            margin-top: 10px;
+            flex-direction: column;
+        }
+
+        .post-box-actions .comment-box textarea {
+            width: 150%;
+            resize: none;
+            height: 100px;
+            margin-top: 10px;
+        }
+
+        /* Right Column */
+        .sidebar {
+            width: 20%;
+            background-color: #ffffff;
+            border-left: 1px solid #ddd;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .search-box {
+            margin-bottom: 20px;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        .trending, .suggestions {
+            margin-bottom: 20px;
+        }
+
+        .trending h3, .suggestions h3 {
+            margin-bottom: 10px;
+        }
+
+        .trending ul, .suggestions ul {
+            list-style: none;
+        }
+
+        .trending li, .suggestions li {
+            padding: 10px;
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            margin-bottom: 10px;
+            border-radius: 5px;
+        }
+
+        .trending li:hover, .suggestions li:hover {
+            background-color: #f1f1f1;
+        }
+
+        /* For Suggested Users */
+        .user-card {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .user-card img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+        }
+
+        .user-card span {
+            flex: 1;
+        }
+
+        .user-card button {
+            background-color: red;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+
+        .user-card button:hover {
+            background-color: darkred;
+        }
+        .message-icon {
+            position: fixed;
+            left: 20px;  /* Adjust the left positioning */
+            bottom: 20px;  /* Adjust the bottom positioning */
+            background-color: #007bff;  /* Message icon color */
+            color: white;  /* Icon color */
+            padding: 15px;
+            border-radius: 50%;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            font-size: 20px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .message-icon:hover {
+            background-color: #0056b3;  /* Change color on hover */
+        }
     </style>
 </head>
 <body>

@@ -5,13 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Sign Up</title>
     <style>
-        //* Global Styles */
+        /* Global Styles */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-        
+
         body {
             font-family: Arial, sans-serif;
             background-color: white;
@@ -19,34 +19,26 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 100vh;
-            padding: 20px;
-            overflow-y: auto;
+            height: 100vh;
+            overflow: hidden;
         }
-        
-        /* Container - Flexible Layout */
+
         .container {
             display: flex;
-            flex-wrap: nowrap; /* Prevents stacking unless needed */
-            justify-content: center;
-            align-items: stretch;
             width: 90%;
             max-width: 1000px;
-            gap: 20px; /* Adds space between elements */
         }
-        
+
         /* Form Container */
         .form-container {
-            flex: 1; /* Takes available space equally */
+            width: 50%;
             background: #fff;
             border-radius: 10px;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
             padding: 20px;
             animation: fadeIn 0.8s ease-in-out;
-            min-width: 320px;
         }
-        
-        /* Form Header */
+
         .form-header {
             background-color: black;
             color: white;
@@ -55,15 +47,23 @@
             font-size: 18px;
             font-weight: bold;
         }
-        
-        /* Inputs and Buttons */
+
+        .form-step {
+            display: none;
+            animation: slideIn 0.5s ease-in-out;
+        }
+
+        .form-step.active {
+            display: block;
+        }
+
         label {
             display: block;
             margin-bottom: 8px;
             font-size: 14px;
             font-weight: bold;
         }
-        
+
         input, select, textarea {
             width: 100%;
             padding: 10px;
@@ -72,7 +72,7 @@
             border-radius: 5px;
             font-size: 14px;
         }
-        
+
         button {
             display: block;
             width: 100%;
@@ -85,18 +85,17 @@
             cursor: pointer;
             transition: background 0.3s ease;
         }
-        
+
         button:hover {
             background-color: #b30000;
         }
-        
-        /* Steps Indicator */
+
         .steps {
             display: flex;
             justify-content: center;
             margin-bottom: 10px;
         }
-        
+
         .step {
             width: 10px;
             height: 10px;
@@ -104,77 +103,59 @@
             background: #ddd;
             border-radius: 50%;
         }
-        
+
         .step.active {
             background: red;
         }
-        
-        /* Alternate Signup */
+
         .alternate-signup {
             display: flex;
             justify-content: space-around;
             margin: 15px 0;
         }
-        
+
         .alternate-signup button {
             width: 48%;
         }
-        
-        /* Sign-in Link */
+
         .signin-link {
             text-align: center;
             margin-top: 15px;
         }
-        
+
         .signin-link a {
             color: red;
             text-decoration: none;
             font-weight: bold;
         }
-        
+
         /* Terms and Conditions */
         .terms-container {
-            flex: 1;
+            width: 50%;
             padding: 20px;
             background-color: #f9f9f9;
             border-left: 2px solid #ddd;
             border-radius: 10px;
+            margin-left: 20px;
             animation: fadeIn 0.8s ease-in-out;
-            min-width: 320px;
         }
-        
+
         .terms-container h2 {
             color: black;
             margin-bottom: 15px;
         }
-        
+
         .terms-container p {
             margin-bottom: 10px;
             font-size: 14px;
             line-height: 1.5;
         }
-        
+
         .terms-container a {
             color: red;
             text-decoration: none;
         }
-        
-        /* RESPONSIVE LAYOUT */
-        @media (max-width: 768px) {
-            .container {
-                flex-wrap: wrap; /* Stacks items only on smaller screens */
-                justify-content: center;
-            }
-        
-            .form-container, .terms-container {
-                flex: 1;
-                width: 100%;
-                min-width: unset; /* Removes forced min-width for flexibility */
-                border-left: none;
-                border-top: 2px solid #ddd;
-            }
-        }
-        
+
         /* Animations */
         @keyframes fadeIn {
             from {
@@ -184,7 +165,17 @@
                 opacity: 1;
             }
         }
-        
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
     </style>
 </head>
 <body>
