@@ -42,6 +42,20 @@ routes = Blueprint('routes', __name__)
 #         return f"Welcome, {session['username']}!"
 #     return render_template('intro.html') 
 
+ON_RENDER = os.getenv("RENDER") is not None  # Detect if running on Render
+
+def run_browser():
+    with sync_playwright() as p:
+        browser = p.chromium.launch(headless=True)  # Ensure headless mode
+        page = browser.new_page()
+        page.goto("https://www.google.com")
+        content = page.content()
+        browser.close()
+        return content
+
+if not ON_RENDER:  # Prevent Playwright from running on Render
+    print(run_browser())
+
 @routes.route('/')
 def home():
     if 'username' in session:

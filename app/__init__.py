@@ -77,7 +77,8 @@ def create_app():
     app.secret_key = os.getenv('SECRET_KEY', secrets.token_hex(32))
     app.config['WTF_CSRF_ENABLED'] = True
     app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv(
-        'SQLALCHEMY_DATABASE_URI', 'postgresql://postgres:password@localhost:5433/mydatabase'
+    'DATABASE_URL', 
+    'postgresql://football_db_45ja_user:FcSz0jnwqUujnD1o1ZmWBaMEMP22RuiO@dpg-cv88815ds78s73e900hg-a/football_db_45ja'
     )
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     app.config['SESSION_TYPE'] = 'filesystem'
