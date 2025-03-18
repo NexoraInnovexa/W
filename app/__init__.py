@@ -78,20 +78,32 @@ def create_app():
     app.config['WTF_CSRF_ENABLED'] = True
 
     # Dynamically switch database based on environment
-    if os.getenv("RENDER") == "true":
-        app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('POSTGRES_URI', 'postgresql://football_db_45ja_user:FcSz0jnwqUujnD1o1ZmWBaMEMP22RuiO@dpg-cv88815ds78s73e900hg-a/football_db_45ja')
-    else:
-        app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv(
-            'LOCAL_POSTGRES_URI',  # Local Database
-            'postgresql://postgres:Amarachi1994@localhost:5433/mydatabase'
-        )
+    # if os.getenv("RENDER") == "true":
+    #     app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('POSTGRES_URI', 'postgresql://football_db_45ja_user:FcSz0jnwqUujnD1o1ZmWBaMEMP22RuiO@dpg-cv88815ds78s73e900hg-a/football_db_45ja')
+    # else:
+    #     app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv(
+    #         'LOCAL_POSTGRES_URI',  # Local Database
+    #         'postgresql://postgres:Amarachi1994@localhost:5433/mydatabase'
+    #     )
 
-    # Debug: Print the database URI being used
-    print(f"Using Database URI: {app.config['SQLALCHEMY_DATABASE_URI']}")
+    # # Debug: Print the database URI being used
+    # print(f"Using Database URI: {app.config['SQLALCHEMY_DATABASE_URI']}")
 
+
+    # if not app.config.get("SQLALCHEMY_DATABASE_URI"):
+    #     raise RuntimeError("Database URI is missing! Check your .env file.")
+
+    app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv(
+        'POSTGRES_URI', 
+        'postgresql://football_db_45ja_user:FcSz0jnwqUujnD1o1ZmWBaMEMP22RuiO@dpg-cv88815ds78s73e900hg-a/football_db_45ja'
+    )
+
+    # Debugging: Log the database URI
+    print(f"🔍 Using Database URI: {app.config['SQLALCHEMY_DATABASE_URI']}")
 
     if not app.config.get("SQLALCHEMY_DATABASE_URI"):
-        raise RuntimeError("Database URI is missing! Check your .env file.")
+        raise RuntimeError("❌ Database URI is missing! Check your environment variables.")
+
 
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     app.config['SESSION_TYPE'] = 'filesystem'
