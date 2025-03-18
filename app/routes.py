@@ -493,11 +493,6 @@ def report_user(user_id):
 
     return redirect(url_for('routes.user_profile', user_id=user_id))
 
-@routes.route('/job', methods=['POST'])
-def job():
-    return render_template('job_dashboard.html')
-
-
 @routes.route('/explore/trending')
 def explore_trending():
     trending_topics = calculate_trending_topics()
@@ -1242,6 +1237,13 @@ def trending_jobs():
 def trending_services():
     services = Service.query.order_by(Service.requests_count.desc()).limit(5).all()
     return render_template('trending_services.html', services=services)
+
+
+@routes.route('/job', methods=['GET'])
+def job():
+    """Redirect users to the job dashboard"""
+    return redirect(url_for('routes.job_dashboard'))
+
 
 @routes.route('/job_dashboard', methods=['GET'])
 def job_dashboard():
