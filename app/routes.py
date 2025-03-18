@@ -66,33 +66,47 @@ def home():
 @routes.route('/signup', methods=['GET', 'POST'])
 def signup():
     if request.method == 'POST':
-        username = request.form['username']
-        email = request.form['email']
-        password = request.form['password']
-        date_of_birth = request.form['date_of_birth']
-        country = request.form['country']
-        address = request.form['address']
-        id_verified = 'id_verified' in request.form
-        accepted_terms = 'accepted_terms' in request.form
-        hashed_password = generate_password_hash(password)
-        new_user = User(
-            username=username,
-            email=email,
-            password=hashed_password,
-            date_of_birth=date_of_birth,
-            country=country,
-            address=address,
-            id_verified=id_verified,
-            accepted_terms=accepted_terms
-        )
         try:
+            username = request.form.get('username')
+            email = request.form.get('email')
+            password = request.form.get('password')
+            date_of_birth = request.form.get('date_of_birth', None)  # Optional
+            country = request.form.get('country', None)  # Optional
+            address = request.form.get('address', None)  # Optional
+            id_verified = 'id_verified' in request.form
+            accepted_terms = 'accepted_terms' in request.form
+
+            if not username or not email or not password:  # Ensure required fields
+                flash("Username, email, and password are required!", "danger")
+                return redirect(url_for('routes.signup'))
+
+            hashed_password = generate_password_hash(password)
+
+            new_user = User(
+                username=username,
+                email=email,
+                password=hashed_password,
+                date_of_birth=date_of_birth if date_of_birth else None,
+                country=country if country else None,
+                address=address if address else None,
+                id_verified=id_verified,
+                accepted_terms=accepted_terms,
+                created_at=datetime.utcnow()
+            )
+
             db.session.add(new_user)
             db.session.commit()
             flash("Account created successfully!", "success")
             return redirect(url_for('routes.login'))
+
         except IntegrityError:
             db.session.rollback()
             flash("Email already exists!", "danger")
+            return redirect(url_for('routes.signup'))
+
+        except Exception as e:
+            db.session.rollback()
+            flash(f"Error: {str(e)}", "danger")  # Show full error
             return redirect(url_for('routes.signup'))
 
     return render_template('signup.html')

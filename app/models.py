@@ -30,45 +30,34 @@ class User(db.Model, UserMixin):
 
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
-    profile_picture = db.Column(db.String(200), nullable=True)
-    email = db.Column(db.String(120), unique=True, nullable=True)
-    password = db.Column(db.String(200), nullable=True)
-    date_of_birth = db.Column(db.Date, nullable=False)
-    country = db.Column(db.String(100), nullable=False)
-    address = db.Column(db.String(200), nullable=False)
+    profile_picture = db.Column(db.String(200), nullable=True)  # Optional
+    email = db.Column(db.String(120), unique=True, nullable=False)  # Fixed duplicate email field
+    password = db.Column(db.String(200), nullable=False)
+    date_of_birth = db.Column(db.Date, nullable=True)  # Optional
+    country = db.Column(db.String(100), nullable=True)  # Optional
+    address = db.Column(db.String(200), nullable=True)  # Optional
     id_verified = db.Column(db.Boolean, default=False)
     accepted_terms = db.Column(db.Boolean, default=False)
-    surname = db.Column(db.String(200), nullable=True)
-    first_name = db.Column(db.String(200), nullable=True)
-    store_name = db.Column(db.String(150), nullable=True)
-    products = db.relationship('Product', backref='seller', lazy=True)
+    surname = db.Column(db.String(200), nullable=True)  # Optional
+    first_name = db.Column(db.String(200), nullable=True)  # Optional
+    store_name = db.Column(db.String(150), nullable=True)  # Optional
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    middle_name = db.Column(db.String(200), nullable=True)
-    followed_users = db.relationship(
-        'User',
-        secondary='follows',
-        primaryjoin=id == Follow.follower_user_id,  
-        secondaryjoin=id == Follow.followed_user_id,  
-        backref=db.backref('followers', lazy='dynamic'),  # Back-reference for users who follow others
-        lazy='dynamic'  # This allows lazy loading of followers/following
-    )
-    role = db.Column(db.String(50), nullable=True)
-    blue_tick = db.Column(db.Boolean, default=False) 
+    middle_name = db.Column(db.String(200), nullable=True)  # Optional
+    role = db.Column(db.String(50), nullable=True, default="user")  # Default role
+    blue_tick = db.Column(db.Boolean, default=False)
     is_storyteller = db.Column(db.Boolean, default=False)
-    owned_groups = db.relationship('Group', backref='owner', lazy=True)
-    email = db.Column(db.String(120), unique=True, nullable=False)
     premium_status = db.Column(db.Boolean, default=False)
-    bank_account_number = db.Column(db.String(20))  # Bank Account Number
-    bank_name = db.Column(db.String(100))  # Bank Name
-    bank_account_type = db.Column(db.String(20))  # Account Type (e.g., savings)
-    paystack_account_id = db.Column(db.String(100))  # Paystack Account ID
-    premium_expiry = db.Column(db.DateTime, nullable=True)
+    bank_account_number = db.Column(db.String(20), nullable=True)  # Optional
+    bank_name = db.Column(db.String(100), nullable=True)  # Optional
+    bank_account_type = db.Column(db.String(20), nullable=True)  # Optional
+    paystack_account_id = db.Column(db.String(100), nullable=True)  # Optional
+    premium_expiry = db.Column(db.DateTime, nullable=True)  # Optional
+
     def get_id(self):
         return str(self.id)
 
     def __repr__(self):
         return f'<User {self.username}>'
-    
 
 
 class Post(db.Model):

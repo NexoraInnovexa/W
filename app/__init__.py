@@ -76,13 +76,26 @@ def create_app():
     # Flask Configurations
     app.secret_key = os.getenv('SECRET_KEY', secrets.token_hex(32))
     app.config['WTF_CSRF_ENABLED'] = True
-    app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv(
-    'DATABASE_URL', 
-    'postgresql://football_db_45ja_user:FcSz0jnwqUujnD1o1ZmWBaMEMP22RuiO@dpg-cv88815ds78s73e900hg-a/football_db_45ja'
-    )
+
+    # Dynamically switch database based on environment
+    if os.getenv("RENDER") == "true":
+        app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('POSTGRES_URI')
+    else:
+        app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv(
+            'LOCAL_POSTGRES_URI',  # Local Database
+            'postgresql://postgres:Amarachi1994@localhost:5433/mydatabase'
+        )
+
+    # Debug: Print the database URI being used
+    print(f"Using Database URI: {app.config['SQLALCHEMY_DATABASE_URI']}")
+
+
+    if not app.config.get("SQLALCHEMY_DATABASE_URI"):
+        raise RuntimeError("Database URI is missing! Check your .env file.")
+
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     app.config['SESSION_TYPE'] = 'filesystem'
-    app.config["PERMANENT_SESSION_LIFETIME"] = 3600  # 1 hour session expiration
+    app.config["PERMANENT_SESSION_LIFETIME"] = 3600  # 1-hour session expiration
     app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
     app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # Max file size
 
@@ -99,18 +112,6 @@ def create_app():
     login_manager.init_app(app)
     mail.init_app(app)
     socketio.init_app(app)
-
-    # Attach Redis client to app
-    # app.redis_client = redis_client
-
-    # Elasticsearch connection
-    # elasticsearch_host = os.getenv('ELASTICSEARCH_HOST', 'localhost')
-    # elasticsearch_port = int(os.getenv('ELASTICSEARCH_PORT', 9200))
-    # elasticsearch_scheme = os.getenv('ELASTICSEARCH_SCHEME', 'http')
-
-    # app.elasticsearch = Elasticsearch(
-    #     [{'host': elasticsearch_host, 'port': elasticsearch_port, 'scheme': elasticsearch_scheme}]
-    # )
 
     # Register Blueprints (routes)
     from .routes import routes
