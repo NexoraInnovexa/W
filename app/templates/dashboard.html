@@ -376,6 +376,12 @@
             display: none;
         }
         
+        .mobile-side-menu,
+        .mobile-side-menu {
+            display: none;
+        }
+        
+
 
         /* Mobile-Specific Styles */
         @media screen and (max-width: 768px) {
@@ -444,84 +450,48 @@
               display: block;  /* Visible on mobile */
             }
       
-            /* Side Menu */
-            .side-menu {
-              position: fixed;
-              top: 0;
-              left: -250px; /* Initially hidden */
-              width: 250px;
-              height: 100%;
-              background: #222;
-              color: white;
-              transition: all 0.3s ease-in-out;
-              overflow-y: auto;
-              z-index: 1000;
-            }
-            
-            .side-menu.show-menu {
-              left: 0; /* Slide in when toggled */
-            }
-      
-            .side-menu ul {
-              list-style: none;
-              padding: 0;
-              margin: 0;
-            }
-      
-            .side-menu ul li,
-            .side-menu ul a,
-            .side-menu ul button {
-              display: block;
-              width: 100%;
-              padding: 15px;
-              border-bottom: 1px solid #444;
-              background: none;
-              border: none;
-              color: white;
-              text-align: left;
-              cursor: pointer;
-            }
-            
-            .side-menu ul a {
-              text-decoration: none;
-            }
-      
-            /* Close Button */
-            .close-btn {
-              position: absolute;
-              top: 10px;
-              right: 10px;
-              background: red;
-              color: white;
-              border: none;
-              padding: 5px 10px;
-              cursor: pointer;
-            }
-      
-            /* Overlay */
-            .overlay {
-              position: fixed;
-              top: 0;
-              left: 0;
-              width: 100%;
-              height: 100%;
-              background: rgba(0, 0, 0, 0.5);
-              display: none;
-              z-index: 999;
-            }
-      
-            .overlay.show-overlay {
-              display: block;
-            }
-          }
-      
-          /* Desktop styles */
-          @media screen and (min-width: 769px) {
-            .menu-btn {
-              display: none;
-            }
-          }
-  
+            .mobile-side-menu {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 60px;
+                height: 100%;
+                background: #222;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                padding: 9px 0;
+                z-index: 1000;
+              }
+              
+              .mobile-side-menu ul {
+                list-style: none;
+                padding: 0;
+                margin: 0;
+                width: 100%;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+              }
+              
+              .mobile-side-menu li {
+                width: 100%;
+                text-align: center;
+                margin: 9px 0; /* Increased margin for spacing */
+              }
+              
+              .mobile-side-menu a {
+                color: white;
+                text-decoration: none;
+                font-size: 12px; /* Larger icon size */
+                display: block;
+                padding: 10px 0;
+              }
+              
+              .mobile-side-menu a:hover {
+                color: #ff4757;
+              }
+              
 
 </style>
 </head>
@@ -622,44 +592,40 @@
     </div>
 </div>
 
-<button id="menu-toggle" class="menu-btn"><i class="fa fa-bars"></i></button>
-
-
 
 <!-- Sidebar Menu -->
-<div id="side-nav" class="side-menu"> 
-    <button id="close-menu" class="close-btn">✖</button>
+<div id="side-nav" class="mobile-side-menu">
     <ul>
-      <li><button><i class="fa fa-home"></i> Home</button></li>
-      <li><a href="{{ url_for('routes.explore') }}"><i class="fa fa-compass"></i> Explore</a></li>
-      <li><button><i class="fa fa-bell"></i> Notifications</button></li>
-      <li><a href="{{ url_for('routes.messages') }}"><i class="fa fa-envelope"></i> Messages</a></li>
-      <li><a href="{{ url_for('routes.marketplace') }}"><i class="fa fa-store"></i> Marketplace</a></li>
-      <li><a href="{{ url_for('routes.edit_profile') }}"><i class="fa fa-user"></i> Profile</a></li>
-      <li><a href="{{ url_for('routes.ad') }}"><i class="fa fa-bullhorn"></i> Ads</a></li>
-      <li><button><i class="fa fa-crown"></i> Premium</button></li>
-      <li><button><i class="fa fa-paint-brush"></i> Artistries</button></li>
-      <li><a href="{{ url_for('routes.story') }}"><i class="fa fa-book"></i> Storyland</a></li>
-      <li><button><i class="fa fa-chart-line"></i> Analytics</button></li>
-      <li><a href="{{ url_for('routes.groups') }}"><i class="fa fa-users"></i> Groups</a></li>
-      <li><a href="{{ url_for('routes.startup_toolkit') }}"><i class="fa fa-briefcase"></i> Startup Toolkit</a></li>
-      <li><button><i class="fa fa-paw"></i> Pets</button></li>
-      <li><button><i class="fa fa-cogs"></i> Settings</button></li>
-      <li><a href="{{ url_for('routes.all_events') }}"><i class="fa fa-calendar-alt"></i> Events</a></li>
-      <li><a href="{{ url_for('routes.job') }}"><i class="fa fa-briefcase"></i> Jobs & Services</a></li>
-      <li><button><i class="fa fa-plus-circle"></i> Create Post</button></li>
-      <li id="job-dashboard-content" style="display:none;"> 
-        <!-- Additional dynamic content -->
-      </li>
+      <li><a href="{{ url_for('routes.dashboard') }}"><i class="fa fa-home"></i></a></li>
+      <li><a href="{{ url_for('routes.explore') }}"><i class="fa fa-compass"></i></a></li>
+      <li><a href="#"><i class="fa fa-bell"></i></a></li>
+      <li><a href="{{ url_for('routes.marketplace') }}"><i class="fa fa-store"></i></a></li>
+      <li><a href="{{ url_for('routes.ad') }}"><i class="fa fa-bullhorn"></i></a></li>
+      <li><a href="#"><i class="fa fa-crown"></i></a></li>
+      <li><a href="{{ url_for('routes.story') }}"><i class="fa fa-book"></i></a></li>
+      <li><a href="#"><i class="fa fa-chart-line"></i></a></li>
+      <li><a href="{{ url_for('routes.groups') }}"><i class="fa fa-users"></i></a></li>
+      <li><a href="{{ url_for('routes.startup_toolkit') }}"><i class="fa fa-briefcase"></i></a></li>
+      <li><a href="#"><i class="fa fa-paw"></i></a></li>
+      <li><a href="#"><i class="fa fa-cogs"></i></a></li>
+      <li><a href="{{ url_for('routes.messages') }}"><i class="fa fa-envelope"></i></a></li>
+      <li><a href="{{ url_for('routes.all_events') }}"><i class="fa fa-calendar-alt"></i></a></li>
+      <li><a href="{{ url_for('routes.job') }}"><i class="fa fa-briefcase"></i></a></li>
+      <li><a href="{{ url_for('routes.edit_profile') }}"><i class="fa fa-user"></i></a></li>
+      <li><a href="#"><i class="fa fa-paint-brush"></i></a></li>
+      <li><a href="#"><i class="fa fa-plus-circle"></i></a></li>
     </ul>
   </div>
+  
+  
 
   <!-- Overlay -->
   <div id="overlay" class="overlay"></div>
 
 <div class="bottom-nav"> 
             <a href="{{ url_for('routes.dashboard') }}">
-                 <button><i class="fa fa-home"></i></button>
+                <button><i class="fa fa-home"></i></button>
+            </a>    
             <a href="{{ url_for('routes.explore') }}">
                 <button><i class="fa fa-compass"></i></button>
             </a>
@@ -810,36 +776,6 @@
         });
 
 
-        document.addEventListener("DOMContentLoaded", function() {
-            const menuToggle = document.getElementById("menu-toggle");
-            const closeMenu = document.getElementById("close-menu");
-            const sideNav = document.getElementById("side-nav");
-            const overlay = document.getElementById("overlay");
-      
-            if (menuToggle && closeMenu && sideNav && overlay) {
-              // Open Menu
-              menuToggle.addEventListener("click", function() {
-                sideNav.classList.add("show-menu");
-                overlay.classList.add("show-overlay");
-              });
-      
-              // Close Menu
-              closeMenu.addEventListener("click", function() {
-                sideNav.classList.remove("show-menu");
-                overlay.classList.remove("show-overlay");
-              });
-      
-              // Close when clicking outside
-              overlay.addEventListener("click", function() {
-                sideNav.classList.remove("show-menu");
-                overlay.classList.remove("show-overlay");
-              });
-            } else {
-              console.error("One or more elements are missing.");
-            }
-          });
-
-        
     </script>
 </body>
 </html>
