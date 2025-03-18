@@ -24,7 +24,8 @@ UPLOAD_FOLDER = 'static/uploads'
 ALLOWED_EXTENSIONS = {'jpg', 'jpeg', 'png', 'gif', 'mp4', 'mov'}
 
 # Check if running on Render
-USE_REDIS = os.getenv("RENDER") is None
+USE_REDIS = os.getenv("RENDER", "false").lower() != "true"
+
 
 if USE_REDIS:
     from redis import Redis
@@ -54,6 +55,11 @@ else:
         def delete(self, key):
             self.store.pop(key, None)
     
+    redis_client = RedisFallback()
+    print("⚠️ Running on Render: Using dictionary-based cache instead of Redis")
+
+
+if not USE_REDIS:
     redis_client = RedisFallback()
     print("⚠️ Running on Render: Using dictionary-based cache instead of Redis")
 
@@ -94,16 +100,16 @@ def create_app():
     socketio.init_app(app)
 
     # Attach Redis client to app
-    app.redis_client = redis_client
+    # app.redis_client = redis_client
 
     # Elasticsearch connection
-    elasticsearch_host = os.getenv('ELASTICSEARCH_HOST', 'localhost')
-    elasticsearch_port = int(os.getenv('ELASTICSEARCH_PORT', 9200))
-    elasticsearch_scheme = os.getenv('ELASTICSEARCH_SCHEME', 'http')
+    # elasticsearch_host = os.getenv('ELASTICSEARCH_HOST', 'localhost')
+    # elasticsearch_port = int(os.getenv('ELASTICSEARCH_PORT', 9200))
+    # elasticsearch_scheme = os.getenv('ELASTICSEARCH_SCHEME', 'http')
 
-    app.elasticsearch = Elasticsearch(
-        [{'host': elasticsearch_host, 'port': elasticsearch_port, 'scheme': elasticsearch_scheme}]
-    )
+    # app.elasticsearch = Elasticsearch(
+    #     [{'host': elasticsearch_host, 'port': elasticsearch_port, 'scheme': elasticsearch_scheme}]
+    # )
 
     # Register Blueprints (routes)
     from .routes import routes
