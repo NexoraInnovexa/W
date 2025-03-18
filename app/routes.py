@@ -19,8 +19,8 @@ from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
 from sklearn.linear_model import LogisticRegression
 # import numpy as np
-import redis
-import redis
+# import redis
+
 import pandas as pd
 # from sklearn.metrics import classification_report
 import pickle
@@ -2757,7 +2757,37 @@ def startup_toolkit():
 
 
 # Initialize Redis cache
-cache = redis.StrictRedis(host='localhost', port=6379, db=0)
+ON_RENDER = os.getenv("RENDER") is not None  # Render sets certain environment variables
+
+# Use Redis if available and not on Render
+if not ON_RENDER:
+    try:
+        import redis
+        cache = redis.StrictRedis(host='localhost', port=6379, db=0)
+        cache.ping()  # Check if Redis is available
+    except (ImportError, ConnectionError):
+        ON_RENDER = True  # Fallback to dictionary-based cache
+else:
+    ON_RENDER = True
+
+# Dictionary-based cache for Render or if Redis is unavailable
+if ON_RENDER:
+    class LocalCache:
+        """Simple dictionary-based cache fallback."""
+        def __init__(self):
+            self.store = {}
+
+        def set(self, key, value):
+            self.store[key] = value
+
+        def get(self, key):
+            return self.store.get(key)
+
+        def delete(self, key):
+            self.store.pop(key, None)
+
+    cache = LocalCache()
+
 nltk.download("vader_lexicon")
 
 def train_model():
@@ -2792,7 +2822,7 @@ def train_model():
             ("industry", OneHotEncoder(handle_unknown="ignore"), ["industry"]),
             ("targetMarket", OneHotEncoder(handle_unknown="ignore"), ["targetMarket"]),
         ],
-        remainder="drop"  
+        remainder="drop"
     )
 
     model_pipeline = Pipeline(steps=[
@@ -2804,18 +2834,18 @@ def train_model():
     model_pipeline.fit(X_train, y_train)
     return model_pipeline
 
-def cache_model(redis_client, model, key="business_idea_model"):
+def cache_model(cache, model, key="business_idea_model"):
     """
-    Cache the trained model in Redis.
+    Cache the trained model.
     """
     serialized_model = pickle.dumps(model)
-    redis_client.set(key, serialized_model)
+    cache.set(key, serialized_model)
 
-def load_model_from_cache(redis_client, key="business_idea_model"):
+def load_model_from_cache(cache, key="business_idea_model"):
     """
-    Load the model from Redis cache.
+    Load the model from cache.
     """
-    serialized_model = redis_client.get(key)
+    serialized_model = cache.get(key)
     if serialized_model:
         return pickle.loads(serialized_model)
     return None
@@ -2838,7 +2868,6 @@ if model_from_cache:
     print("Model loaded from cache successfully!")
 else:
     print("Failed to load model from cache.")
-
 
 # Competitor search function using Playwright
 def search_and_analyze_idea(idea, max_retries=3):
