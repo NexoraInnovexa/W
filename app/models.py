@@ -53,6 +53,21 @@ class User(db.Model, UserMixin):
     paystack_account_id = db.Column(db.String(100), nullable=True)  # Optional
     premium_expiry = db.Column(db.DateTime, nullable=True)  # Optional
 
+    # ✅ Added relationships for followers and followed users
+    followed_users = db.relationship(
+        'Follow',
+        foreign_keys='Follow.follower_user_id',
+        backref='follower_user',
+        lazy='dynamic'
+    )
+
+    followers = db.relationship(
+        'Follow',
+        foreign_keys='Follow.followed_user_id',
+        backref='followed_user',
+        lazy='dynamic'
+    )
+
     def get_id(self):
         return str(self.id)
 
