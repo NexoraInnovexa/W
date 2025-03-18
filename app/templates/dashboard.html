@@ -378,181 +378,150 @@
         
 
         /* Mobile-Specific Styles */
-@media screen and (max-width: 768px) {
-    .menu, .sidebar {
-        display: none; /* Hide menu and sidebar on mobile */
-    }
-
-    .feed {
-        width: 100%; /* Full width for content */
-    }
-
-    /* Mobile Bottom Navigation Bar */
-    .bottom-nav {
-        display: flex;
-        justify-content: space-around;
-        align-items: center;
-        position: fixed;
-        bottom: 0;
-        width: 100%;
-        background-color: #fff;
-        border-top: 1px solid #ddd;
-        padding: 10px 0;
-        height:40px;
-        box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
-    }
-
-    .bottom-nav button {
-        background: none;
-        border: none;
-        font-size: 18px;
-        cursor: pointer;
-        color: #333;
-    }
-
-    .bottom-nav button:hover {
-        color: red;
-    }
-
-
-    .bottom-nav {
-        display: flex; /* Show only on mobile */
-        justify-content: space-around;
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        width: 100%;
-        background: #fff;
-        padding: 10px 0;
-        box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
-    }
-
-    .bottom-nav a {
-        text-decoration: none;
-        color: #555;
-        font-size: 24px;
-        padding: 10px;
-    }
-
-    .bottom-nav a.active {
-        color: #007bff; /* Highlight active link */
-    }
-
-    .bottom-nav a:hover {
-        color: #ff4757; /* Color change on hover */
-    }
-
-    .sidebar {
-        position: fixed;
-        left: -220px; /* Move sidebar out of view */
-        top: 0;
-        height: 100%;
-        background-color: #fff;
-        box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
-        z-index: 1000;
-        padding: 20px;
-    }
-    
-    .sidebar.open {
-        left: 0; /* Show sidebar when open */
-    }
-
-    .main-content {
-        flex-grow: 1;
-        width: 100%; /* Expand main content */
-    }
-
-
-    @media screen and (min-width: 769px) {
-        .menu-btn {
-            display: none;
-        }
-    }
-
-    .menu-btn {
-        font-size: 24px;
-        background: #333;
-        color: white;
-        padding: 10px 15px;
-        border: none;
-        cursor: pointer;
-        position: fixed;
-        top: 10px;
-        left: 10px;
-        z-index: 1000;
-        display: block;  /* Make visible on mobile */
-    }
-
-    /* Sidebar Menu */
-    .side-menu {
-        position: fixed;
-        top: 0;
-        left: -250px; /* Initially hidden */
-        width: 250px;
-        height: 100%;
-        background: #222;
-        color: white;
-        transition: all 0.3s ease-in-out;
-        overflow-y: auto;
-        display: block; /* Ensure it exists */
-    }
-    
-    .side-menu.show-menu {
-        left: 0; /* Slide in when toggled */
-    }
-    
-
-    .side-menu ul {
-        list-style: none;
-        padding: 0;
-        margin: 0;
-    }
-
-    .side-menu ul li {
-        padding: 15px;
-        border-bottom: 1px solid #444;
-    }
-
-    .side-menu ul li a {
-        color: white;
-        text-decoration: none;
-        display: block;
-    }
-
-    /* Show Menu */
-    .show-menu {
-        left: 0;
-    }
-
-    /* Close Button */
-    .close-btn {
-        position: absolute;
-        top: 10px;
-        right: 10px;
-        background: red;
-        color: white;
-        border: none;
-        padding: 5px 10px;
-        cursor: pointer;
-    }
-
-    /* Overlay */
-    .overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0, 0, 0, 0.5);
-        display: none;
-        z-index: 999;
-    }
-
-    .show-overlay {
-        display: block;
-    }
-}
-    
+        @media screen and (max-width: 768px) {
+            .menu, .sidebar {
+              display: none; /* Hide menu and sidebar on mobile */
+            }
+      
+            .feed {
+              width: 100%; /* Full width for content */
+            }
+      
+            /* Mobile Bottom Navigation Bar */
+            .bottom-nav {
+              display: flex;
+              justify-content: space-around;
+              align-items: center;
+              position: fixed;
+              bottom: 0;
+              width: 100%;
+              background-color: #fff;
+              border-top: 1px solid #ddd;
+              padding: 10px 0;
+              height: 40px;
+              box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+            }
+      
+            .bottom-nav button {
+              background: none;
+              border: none;
+              font-size: 18px;
+              cursor: pointer;
+              color: #333;
+            }
+      
+            .bottom-nav button:hover {
+              color: red;
+            }
+      
+            .bottom-nav a {
+              text-decoration: none;
+              color: #555;
+              font-size: 24px;
+              padding: 10px;
+            }
+      
+            .bottom-nav a.active {
+              color: #007bff; /* Highlight active link */
+            }
+      
+            .bottom-nav a:hover {
+              color: #ff4757; /* Color change on hover */
+            }
+      
+            /* Menu Button */
+            .menu-btn {
+              font-size: 24px;
+              background: #333;
+              color: white;
+              padding: 10px 15px;
+              border: none;
+              cursor: pointer;
+              position: fixed;
+              top: 10px;
+              left: 10px;
+              z-index: 1001;
+              display: block;  /* Visible on mobile */
+            }
+      
+            /* Side Menu */
+            .side-menu {
+              position: fixed;
+              top: 0;
+              left: -250px; /* Initially hidden */
+              width: 250px;
+              height: 100%;
+              background: #222;
+              color: white;
+              transition: all 0.3s ease-in-out;
+              overflow-y: auto;
+              z-index: 1000;
+            }
+            
+            .side-menu.show-menu {
+              left: 0; /* Slide in when toggled */
+            }
+      
+            .side-menu ul {
+              list-style: none;
+              padding: 0;
+              margin: 0;
+            }
+      
+            .side-menu ul li,
+            .side-menu ul a,
+            .side-menu ul button {
+              display: block;
+              width: 100%;
+              padding: 15px;
+              border-bottom: 1px solid #444;
+              background: none;
+              border: none;
+              color: white;
+              text-align: left;
+              cursor: pointer;
+            }
+            
+            .side-menu ul a {
+              text-decoration: none;
+            }
+      
+            /* Close Button */
+            .close-btn {
+              position: absolute;
+              top: 10px;
+              right: 10px;
+              background: red;
+              color: white;
+              border: none;
+              padding: 5px 10px;
+              cursor: pointer;
+            }
+      
+            /* Overlay */
+            .overlay {
+              position: fixed;
+              top: 0;
+              left: 0;
+              width: 100%;
+              height: 100%;
+              background: rgba(0, 0, 0, 0.5);
+              display: none;
+              z-index: 999;
+            }
+      
+            .overlay.show-overlay {
+              display: block;
+            }
+          }
+      
+          /* Desktop styles */
+          @media screen and (min-width: 769px) {
+            .menu-btn {
+              display: none;
+            }
+          }
+  
 
 </style>
 </head>
@@ -653,59 +622,40 @@
     </div>
 </div>
 
-<button id="menu-toggle" class="menu-btn">☰</button>
+<button id="menu-toggle" class="menu-btn"><i class="fa fa-bars"></i></button>
+
+
 
 <!-- Sidebar Menu -->
-<div id="side-nav" class="side-menu">
+<div id="side-nav" class="side-menu"> 
     <button id="close-menu" class="close-btn">✖</button>
     <ul>
-        <button><i class="fa fa-home"></i> Home</button>
-        <a href="{{ url_for('routes.explore') }}">
-            <i class="fa fa-compass"></i> Explore
-        </a>
-        <button><i class="fa fa-bell"></i> Notifications</button>
-        <a href="{{ url_for('routes.messages') }}">
-            <i class="fa fa-envelope"></i> Messages
-        </a>   
-        <a href="{{ url_for('routes.marketplace') }}">
-            <i class="fa fa-store"></i> Marketplace
-        </a>   
-        <a href="{{ url_for('routes.edit_profile') }}">
-            <i class="fa fa-user"></i> Profile
-        </a>
-        <a href="{{ url_for('routes.ad') }}">
-            <i class="fa fa-bullhorn"></i> Ads
-        </a>    
-        <button><i class="fa fa-crown"></i> Premium</button>
-        <button><i class="fa fa-paint-brush"></i> Artistries</button>
-        <a href="{{ url_for('routes.story') }}">
-            <i class="fa fa-book"></i> Storyland
-        </a>
-        <button><i class="fa fa-chart-line"></i> Analytics</button>
-        <a href="{{ url_for('routes.groups') }}">
-            <i class="fa fa-users"></i> Groups
-        </a>  
-        <a href="{{ url_for('routes.startup_toolkit') }}">
-            <i class="fa fa-briefcase"></i> Startup Toolkit
-        </a>      
-        <button><i class="fa fa-paw"></i> Pets</button>
-        <button><i class="fa fa-cogs"></i> Settings</button>
-        <a href="{{ url_for('routes.all_events') }}">
-            <i class="fa fa-calendar-alt"></i> Events
-        </a>
-        <a href="{{ url_for('routes.job') }}">
-            <i class="fa fa-briefcase"></i> Jobs & Services
-        </a>   
-        <button><i class="fa fa-plus-circle"></i> Create Post</button>
-        <div id="job-dashboard-content" style="display:none;">
-            <!-- Content will be inserted here -->
-        </div>
+      <li><button><i class="fa fa-home"></i> Home</button></li>
+      <li><a href="{{ url_for('routes.explore') }}"><i class="fa fa-compass"></i> Explore</a></li>
+      <li><button><i class="fa fa-bell"></i> Notifications</button></li>
+      <li><a href="{{ url_for('routes.messages') }}"><i class="fa fa-envelope"></i> Messages</a></li>
+      <li><a href="{{ url_for('routes.marketplace') }}"><i class="fa fa-store"></i> Marketplace</a></li>
+      <li><a href="{{ url_for('routes.edit_profile') }}"><i class="fa fa-user"></i> Profile</a></li>
+      <li><a href="{{ url_for('routes.ad') }}"><i class="fa fa-bullhorn"></i> Ads</a></li>
+      <li><button><i class="fa fa-crown"></i> Premium</button></li>
+      <li><button><i class="fa fa-paint-brush"></i> Artistries</button></li>
+      <li><a href="{{ url_for('routes.story') }}"><i class="fa fa-book"></i> Storyland</a></li>
+      <li><button><i class="fa fa-chart-line"></i> Analytics</button></li>
+      <li><a href="{{ url_for('routes.groups') }}"><i class="fa fa-users"></i> Groups</a></li>
+      <li><a href="{{ url_for('routes.startup_toolkit') }}"><i class="fa fa-briefcase"></i> Startup Toolkit</a></li>
+      <li><button><i class="fa fa-paw"></i> Pets</button></li>
+      <li><button><i class="fa fa-cogs"></i> Settings</button></li>
+      <li><a href="{{ url_for('routes.all_events') }}"><i class="fa fa-calendar-alt"></i> Events</a></li>
+      <li><a href="{{ url_for('routes.job') }}"><i class="fa fa-briefcase"></i> Jobs & Services</a></li>
+      <li><button><i class="fa fa-plus-circle"></i> Create Post</button></li>
+      <li id="job-dashboard-content" style="display:none;"> 
+        <!-- Additional dynamic content -->
+      </li>
     </ul>
-</div>
+  </div>
 
-
-<!-- Overlay -->
-<div id="overlay" class="overlay"></div> 
+  <!-- Overlay -->
+  <div id="overlay" class="overlay"></div>
 
 <div class="bottom-nav"> 
             <a href="{{ url_for('routes.dashboard') }}">
@@ -717,26 +667,17 @@
             <button><i class="fa fa-plus-circle"></i></button>
             <a href="{{ url_for('routes.marketplace') }}">
                <button><i class="fa fa-store"></i></button>
-            </a>   
-            <a href="{{ url_for('routes.ad') }}">
-                <button><i class="fa fa-bullhorn"></i></button>
             </a>    
             <a href="{{ url_for('routes.story') }}">
                 <button><i class="fa fa-book"></i></button>
-            </a>
-            <button><i class="fa fa-chart-line"></i></button>
-            <a href="{{ url_for('routes.groups') }}">
-                <button><i class="fa fa-users"></i></button>
-            </a>  
+            </a> 
             <a href="{{ url_for('routes.startup_toolkit') }}">
                 <button><i class="fa fa-briefcase"></i></button>
             </a>      
             <button><i class="fa fa-cogs"></i></button>
             <a href="{{ url_for('routes.all_events') }}">
                 <button><i class="fa fa-calendar-alt"></i></button>
-            </a>
-            <a href="{{ url_for('routes.job') }}">
-                <button><i class="fa fa-briefcase"></i> </button>   
+            </a>  
             <div id="job-dashboard-content" style="display:none;">
                 <!-- Content will be inserted here -->
             </div>
@@ -868,34 +809,36 @@
             alert('Open chat interface!');
         });
 
+
         document.addEventListener("DOMContentLoaded", function() {
             const menuToggle = document.getElementById("menu-toggle");
             const closeMenu = document.getElementById("close-menu");
             const sideNav = document.getElementById("side-nav");
             const overlay = document.getElementById("overlay");
-    
+      
             if (menuToggle && closeMenu && sideNav && overlay) {
-                // Open Menu
-                menuToggle.addEventListener("click", function() {
-                    sideNav.classList.add("show-menu");
-                    overlay.classList.add("show-overlay");
-                });
-    
-                // Close Menu
-                closeMenu.addEventListener("click", function() {
-                    sideNav.classList.remove("show-menu");
-                    overlay.classList.remove("show-overlay");
-                });
-    
-                // Close when clicking outside
-                overlay.addEventListener("click", function() {
-                    sideNav.classList.remove("show-menu");
-                    overlay.classList.remove("show-overlay");
-                });
+              // Open Menu
+              menuToggle.addEventListener("click", function() {
+                sideNav.classList.add("show-menu");
+                overlay.classList.add("show-overlay");
+              });
+      
+              // Close Menu
+              closeMenu.addEventListener("click", function() {
+                sideNav.classList.remove("show-menu");
+                overlay.classList.remove("show-overlay");
+              });
+      
+              // Close when clicking outside
+              overlay.addEventListener("click", function() {
+                sideNav.classList.remove("show-menu");
+                overlay.classList.remove("show-overlay");
+              });
             } else {
-                console.error("One or more elements are missing.");
+              console.error("One or more elements are missing.");
             }
-        });
+          });
+
         
     </script>
 </body>
