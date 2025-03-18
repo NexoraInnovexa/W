@@ -19,15 +19,20 @@ body {
 .sidebar {
     position: fixed;
     top: 0;
-    left: 0;
+    left: -250px; /* Hide by default */
     width: 250px;
     height: 100%;
     background-color: black;
     color: white;
     padding: 20px;
-    transition: transform 0.3s ease;
+    transition: left 0.3s ease;
+    z-index: 1000;
 }
 
+.sidebar.active {
+    left: 0;
+
+}
 .sidebar h2 {
     text-align: center;
     margin-bottom: 40px;
@@ -171,6 +176,34 @@ button:hover {
     color: #343a40;
 }
 
+.menu-btn {
+    position: fixed;
+    top: 15px;
+    left: 15px;
+    background: black;
+    color: white;
+    border: none;
+    font-size: 24px;
+    padding: 10px;
+    cursor: pointer;
+    z-index: 1100;
+}
+.main-content {
+    transition: margin-left 0.3s ease;
+}
+
+@media screen and (max-width: 768px) {
+    .container {
+        max-width: 100%; /* Expand form width */
+        padding: 10px;
+    }
+
+    .sidebar {
+        width: 80%; /* Sidebar takes 80% width */
+    }
+}
+         
+
     </style>
 </head>
 <body>
@@ -257,5 +290,25 @@ button:hover {
          
         </div>
     </div>
+
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const sidebar = document.querySelector(".sidebar");
+            const menuBtn = document.querySelector(".menu-btn");
+    
+            menuBtn.addEventListener("click", function () {
+                sidebar.classList.toggle("active"); // Toggle sidebar visibility
+            });
+    
+            // Close Sidebar when clicking outside
+            document.addEventListener("click", function (event) {
+                if (!sidebar.contains(event.target) && !menuBtn.contains(event.target)) {
+                    sidebar.classList.remove("active");
+                }
+            });
+        });
+    </script>
+    
 </body>
 </html>

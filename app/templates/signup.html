@@ -6,176 +6,208 @@
     <title>Sign Up</title>
     <style>
         /* Global Styles */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
 
-        body {
-            font-family: Arial, sans-serif;
-            background-color: white;
-            color: #000;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            overflow: hidden;
-        }
+body {
+    font-family: Arial, sans-serif;
+    background-color: white;
+    color: #000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    overflow: hidden;
+}
 
-        .container {
-            display: flex;
-            width: 90%;
-            max-width: 1000px;
-        }
+.container {
+    display: flex;
+    width: 90%;
+    max-width: 1000px;
+}
 
-        /* Form Container */
-        .form-container {
-            width: 50%;
-            background: #fff;
-            border-radius: 10px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-            padding: 20px;
-            animation: fadeIn 0.8s ease-in-out;
-        }
+/* Form Container */
+.form-container {
+    width: 50%;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    animation: fadeIn 0.8s ease-in-out;
+}
 
-        .form-header {
-            background-color: black;
-            color: white;
-            padding: 15px;
-            text-align: center;
-            font-size: 18px;
-            font-weight: bold;
-        }
+.form-header {
+    background-color: black;
+    color: white;
+    padding: 15px;
+    text-align: center;
+    font-size: 18px;
+    font-weight: bold;
+}
 
-        .form-step {
-            display: none;
-            animation: slideIn 0.5s ease-in-out;
-        }
+.form-step {
+    display: none;
+    animation: slideIn 0.5s ease-in-out;
+}
 
-        .form-step.active {
-            display: block;
-        }
+.form-step.active {
+    display: block;
+}
 
-        label {
-            display: block;
-            margin-bottom: 8px;
-            font-size: 14px;
-            font-weight: bold;
-        }
+label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 14px;
+    font-weight: bold;
+}
 
-        input, select, textarea {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 15px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            font-size: 14px;
-        }
+input, select, textarea {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 14px;
+}
 
-        button {
-            display: block;
-            width: 100%;
-            padding: 10px;
-            background-color: red;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            font-size: 16px;
-            cursor: pointer;
-            transition: background 0.3s ease;
-        }
+button {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    background-color: red;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
 
-        button:hover {
-            background-color: #b30000;
-        }
+button:hover {
+    background-color: #b30000;
+}
 
-        .steps {
-            display: flex;
-            justify-content: center;
-            margin-bottom: 10px;
-        }
+.steps {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 10px;
+}
 
-        .step {
-            width: 10px;
-            height: 10px;
-            margin: 0 5px;
-            background: #ddd;
-            border-radius: 50%;
-        }
+.step {
+    width: 10px;
+    height: 10px;
+    margin: 0 5px;
+    background: #ddd;
+    border-radius: 50%;
+}
 
-        .step.active {
-            background: red;
-        }
+.step.active {
+    background: red;
+}
 
-        .alternate-signup {
-            display: flex;
-            justify-content: space-around;
-            margin: 15px 0;
-        }
+.alternate-signup {
+    display: flex;
+    justify-content: space-around;
+    margin: 15px 0;
+}
 
-        .alternate-signup button {
-            width: 48%;
-        }
+.alternate-signup button {
+    width: 48%;
+}
 
-        .signin-link {
-            text-align: center;
-            margin-top: 15px;
-        }
+.signin-link {
+    text-align: center;
+    margin-top: 15px;
+}
 
-        .signin-link a {
-            color: red;
-            text-decoration: none;
-            font-weight: bold;
-        }
+.signin-link a {
+    color: red;
+    text-decoration: none;
+    font-weight: bold;
+}
 
-        /* Terms and Conditions */
-        .terms-container {
-            width: 50%;
-            padding: 20px;
-            background-color: #f9f9f9;
-            border-left: 2px solid #ddd;
-            border-radius: 10px;
-            margin-left: 20px;
-            animation: fadeIn 0.8s ease-in-out;
-        }
+/* Terms and Conditions */
+.terms-container {
+    width: 50%;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-left: 2px solid #ddd;
+    border-radius: 10px;
+    margin-left: 20px;
+    animation: fadeIn 0.8s ease-in-out;
+    overflow-y: auto; /* Enables scrolling if content is long */
+    max-height: 80vh; /* Limits height to avoid excessive scrolling */
+}
 
-        .terms-container h2 {
-            color: black;
-            margin-bottom: 15px;
-        }
+.terms-container h2 {
+    color: black;
+    margin-bottom: 15px;
+}
 
-        .terms-container p {
-            margin-bottom: 10px;
-            font-size: 14px;
-            line-height: 1.5;
-        }
+.terms-container p {
+    margin-bottom: 10px;
+    font-size: 14px;
+    line-height: 1.5;
+}
 
-        .terms-container a {
-            color: red;
-            text-decoration: none;
-        }
+.terms-container a {
+    color: red;
+    text-decoration: none;
+}
 
-        /* Animations */
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-            }
-            to {
-                opacity: 1;
-            }
-        }
+/* Mobile View Adjustments */
+@media screen and (max-width: 768px) {
+    body {
+        flex-direction: column;
+        height: auto;
+        overflow: auto;
+        padding: 20px 0;
+    }
 
-        @keyframes slideIn {
-            from {
-                transform: translateX(100%);
-                opacity: 0;
-            }
-            to {
-                transform: translateX(0);
-                opacity: 1;
-            }
-        }
+    .container {
+        flex-direction: column;
+        width: 95%;
+    }
+
+    .form-container, 
+    .terms-container {
+        width: 100%;
+        margin-left: 0;
+    }
+
+    .terms-container {
+        border-left: none;
+        border-top: 2px solid #ddd;
+        margin-top: 20px;
+    }
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+
+        
     </style>
 </head>
 <body>

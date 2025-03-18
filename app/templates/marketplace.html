@@ -180,6 +180,41 @@
                 transform: translateY(0);
             }
         }
+
+        .navbar nav ul {
+            display: flex;
+            flex-wrap: wrap;  /* Allows items to wrap instead of overflowing */
+            gap: 10px; /* Reduced gap */
+            padding: 0;
+            justify-content: center; /* Centers the menu */
+        }
+        
+        .navbar nav ul li {
+            list-style: none;
+            font-size: 14px; /* Reduce font size for better fit */
+        }
+        
+        /* Responsive adjustments */
+        @media screen and (max-width: 768px) {
+            .navbar {
+                flex-direction: column;  /* Stack items vertically */
+                align-items: center;
+                text-align: center;
+            }
+            
+            .navbar nav ul {
+                justify-content: center; 
+                padding: 10px;
+            }
+        
+            .navbar nav ul li {
+                display: block; /* Ensures each menu item is properly spaced */
+                padding: 5px 0;
+            }
+        }
+        
+
+        
     </style>
 </head>
 <body>

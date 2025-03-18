@@ -493,6 +493,9 @@ def report_user(user_id):
 
     return redirect(url_for('routes.user_profile', user_id=user_id))
 
+@routes.route('/job', methods=['POST'])
+def job():
+    return render_template('job_dashboard.html')
 
 
 @routes.route('/explore/trending')
