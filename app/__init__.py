@@ -1,7 +1,6 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
-from redis import Redis
 from flask_login import LoginManager
 from flask_mail import Mail
 from elasticsearch import Elasticsearch
@@ -24,19 +23,39 @@ socketio = SocketIO()
 UPLOAD_FOLDER = 'static/uploads'
 ALLOWED_EXTENSIONS = {'jpg', 'jpeg', 'png', 'gif', 'mp4', 'mov'}
 
-# Redis Cloud connection
-redis_host = os.getenv('REDIS_HOST')
-redis_port = int(os.getenv('REDIS_PORT', 6379))  # Default to 6379
-redis_password = os.getenv('REDIS_PASSWORD')
+# Check if running on Render
+USE_REDIS = os.getenv("RENDER") is None
 
-# Ensure Redis Cloud uses SSL (important for cloud connection)
-redis_client = Redis(
-    host=redis_host,
-    port=redis_port,
-    password=redis_password,
-    decode_responses=True,
-    ssl=True  # 🔹 Required for Redis Cloud
-)
+if USE_REDIS:
+    from redis import Redis
+    redis_host = os.getenv('REDIS_HOST')
+    redis_port = int(os.getenv('REDIS_PORT', 6379))  # Default to 6379
+    redis_password = os.getenv('REDIS_PASSWORD')
+    
+    redis_client = Redis(
+        host=redis_host,
+        port=redis_port,
+        password=redis_password,
+        decode_responses=True,
+        ssl=True  # Required for Redis Cloud
+    )
+else:
+    class RedisFallback:
+        """Fallback class to simulate Redis behavior with a dictionary."""
+        def __init__(self):
+            self.store = {}
+
+        def set(self, key, value):
+            self.store[key] = value
+
+        def get(self, key):
+            return self.store.get(key)
+
+        def delete(self, key):
+            self.store.pop(key, None)
+    
+    redis_client = RedisFallback()
+    print("⚠️ Running on Render: Using dictionary-based cache instead of Redis")
 
 # User loader for Flask-Login
 from app.models import User
@@ -51,12 +70,14 @@ def create_app():
     # Flask Configurations
     app.secret_key = os.getenv('SECRET_KEY', secrets.token_hex(32))
     app.config['WTF_CSRF_ENABLED'] = True
-    app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('SQLALCHEMY_DATABASE_URI', 'postgresql://postgres:password@localhost:5433/mydatabase')
+    app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv(
+        'SQLALCHEMY_DATABASE_URI', 'postgresql://postgres:password@localhost:5433/mydatabase'
+    )
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     app.config['SESSION_TYPE'] = 'filesystem'
     app.config["PERMANENT_SESSION_LIFETIME"] = 3600  # 1 hour session expiration
     app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-    app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # Max file size 
+    app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # Max file size
 
     # Flask-Mail configuration
     app.config['MAIL_SERVER'] = os.getenv('MAIL_SERVER')
