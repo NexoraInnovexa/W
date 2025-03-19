@@ -145,44 +145,77 @@
             background-color: #e04e29;
         }
 
-        @media screen and (max-width: 768px) {
+        
+
+        @media screen and (max-width: 1024px) {
+            .dashboard-layout {
+                flex-direction: column;
+            }
             .sidebar {
-                position: fixed;
-                left: -220px; /* Move sidebar out of view */
-                top: 0;
-                height: 100%;
-                background-color: #fff;
-                box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
-                z-index: 1000;
-                padding: 20px;
+                width: 100%;
+                display: none;
+                position: absolute;
+                background: white;
+                z-index: 10;
+                padding: 15px;
+                height: 100vh;
+                overflow-y: auto;
             }
-        
-            .sidebar.open {
-                left: 0; /* Show sidebar when open */
+
+            .sidebar::-webkit-scrollbar {
+                width: 5px;
             }
-        
-            .main-content {
-                flex-grow: 1;
-                width: 100%; /* Expand main content */
+            
+            .sidebar::-webkit-scrollbar-thumb {
+                background: #555;
+                border-radius: 10px;
             }
-        
-            .menu-btn {
+            .sidebar.active {
                 display: block;
-                cursor: pointer;
-                font-size: 24px;
-                background: none;
-                border: none;
-                color: white;
-                padding: 10px;
+            }
+            .menu-icon {
+                display: block;
+            }
+            .right-sidebar {
+                width: 100%;
             }
         }
+
+        @media screen and (max-width: 1024px) {
+            .navbar {
+                padding: 8px 15px;
+            }
+            .nav-links {
+                display: none;
+            }
+            .menu-icon {
+                display: block;
+            }
+            .main-content {
+                padding: 15px;
+            }
+
+            mobile-close-btn {
+                position: absolute;
+                top: 10px;
+                right: 15px;
+                font-size: 24px;
+                cursor: pointer;
+            }
+    
+        }
+
+        @media (min-width: 1025px) {
+            .menu-icon {
+                display: none;
+            }
         
-        /* Hide menu button on larger screens */
-        @media screen and (min-width: 769px) {
-            .menu-btn {
+
+            .mobile-close-btn{
                 display: none;
             }
         }
+
         
     </style>
 </head>
@@ -206,7 +239,7 @@
             <div class="nav-icons">
                 <a href="#"><i class="fas fa-bell"></i></a>
                 <div class="dropdown">
-                    <a href="#"><i class="fas fa-calendar-alt"></i></a>
+                    <a href="{{ url_for('routes.all_events') }}"><i class="fa fa-calendar-alt"></i></a>
                     <div class="dropdown-content">
                         <a href="{{ url_for('routes.create_event') }}">Create Event</a>
                         <a href="{{ url_for('routes.all_events') }}">View Events</a>
@@ -216,11 +249,20 @@
         </nav>
 
         <!-- Dashboard Layout -->
+        
         <div class="dashboard-layout">
             <!-- Sidebar -->
+            <span class="fas fa-bars menu-icon" onclick="toggleSidebar()"></span>
             <div class="sidebar">
+            <span class="mobile-close-btn" onclick="toggleMobileMenu()">×</span>
                 <h3>Dashboard Menu</h3>
                 <ul>
+                    <li><a href="{{ url_for('routes.job_dashboard') }}"><i class="fas fa-briefcase"></i> Job Dashboard</a></li>
+                    <li><a href="{{ url_for('routes.view_jobs') }}"><i class="fas fa-briefcase"></i> View Jobs</a></li>
+                    <li><a href="{{ url_for('routes.view_services') }}"><i class="fas fa-tools"></i> View Services</a></li>
+                    <li><a href="{{ url_for('routes.post_job') }}"><i class="fas fa-plus"></i> Post Job</a></li>
+                    <li><a href="{{ url_for('routes.post_service') }}"><i class="fas fa-plus-circle"></i> Post Service</a></li>
+                    <li><a href="{{ url_for('routes.logout') }}"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
                     <li><a href="{{ url_for('routes.view_jobs') }}"><i class="fas fa-briefcase"></i> Jobs</a></li>
                 
                     <li><a href="{{ url_for('routes.view_services') }}"><i class="fas fa-tools"></i> Services</a></li>
@@ -230,6 +272,7 @@
                     {% else %}
                            <li>No Applications yet!</li>
                     {% endfor %}
+                     
                 </ul>
                 <div class="advert">
                     <h4>Advert</h4>
@@ -303,9 +346,15 @@
 
     <script>
         function toggleSidebar() {
-            document.querySelector(".sidebar").classList.toggle("open");
+            const sidebar = document.querySelector('.sidebar');
+            sidebar.classList.toggle('active');
         }
-        </script>
-        
+    
+        function toggleMobileMenu() {
+            const sidebar = document.querySelector('.sidebar');
+            sidebar.classList.remove('active'); // Ensures it closes
+        }
+    </script>
+    
 </body>
 </html>
