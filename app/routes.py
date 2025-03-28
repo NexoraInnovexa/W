@@ -63,6 +63,9 @@ def home():
     return render_template('intro.html')
 
 
+
+MATRIX_SERVER = "https://matrix.org"  # Use public Matrix server
+
 @routes.route('/signup', methods=['GET', 'POST'])
 def signup():
     if request.method == 'POST':
@@ -82,6 +85,7 @@ def signup():
 
             hashed_password = generate_password_hash(password)
 
+            # Save user in your database
             new_user = User(
                 username=username,
                 email=email,
@@ -96,6 +100,24 @@ def signup():
 
             db.session.add(new_user)
             db.session.commit()
+
+            # Register user on Matrix server
+            try:
+                matrix_response = requests.post(
+                    f"{MATRIX_SERVER}/_matrix/client/r0/register",
+                    json={
+                        "username": username,  
+                        "password": password,  
+                        "auth": {"type": "m.login.dummy"}  # Bypass auth
+                    }
+                )
+                if matrix_response.status_code == 200:
+                    flash("Matrix account created successfully!", "success")
+                else:
+                    flash("Matrix registration failed, but your app account was created.", "warning")
+            except Exception as e:
+                flash("Could not connect to Matrix server.", "warning")
+
             flash("Account created successfully!", "success")
             return redirect(url_for('routes.login'))
 
@@ -111,6 +133,7 @@ def signup():
 
     return render_template('signup.html')
 
+
 @routes.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -121,16 +144,44 @@ def login():
         if user and check_password_hash(user.password, password):
             session['user_id'] = user.id
             session['username'] = user.username
+
+            # Attempt Matrix login
+            try:
+                matrix_response = requests.post(
+                    f"{MATRIX_SERVER}/_matrix/client/r0/login",
+                    json={"type": "m.login.password", "user": user.username, "password": password}
+                )
+                if matrix_response.status_code == 200:
+                    matrix_data = matrix_response.json()
+                    session['matrix_token'] = matrix_data['access_token']
+                    flash("Logged into Matrix successfully!", "success")
+                else:
+                    flash("Matrix login failed, but you can still use the app.", "warning")
+            except Exception as e:
+                flash("Could not connect to Matrix server.", "warning")
+
             flash("Logged in successfully!", "success")
             return redirect(url_for('routes.dashboard'))
         else:
             flash("Invalid email or password!", "danger")
             return redirect(url_for('routes.login'))
 
-    return render_template('login.html')  
+    return render_template('login.html')
 
 @routes.route('/logout')
 def logout():
+    matrix_token = session.get('matrix_token')
+
+    # Log out of Matrix if the token exists
+    if matrix_token:
+        try:
+            requests.post(
+                f"{MATRIX_SERVER}/_matrix/client/r0/logout",
+                headers={"Authorization": f"Bearer {matrix_token}"}
+            )
+        except Exception as e:
+            current_app.logger.error(f"Matrix logout failed: {e}")
+
     session.clear()
     flash("Logged out successfully!", "success")
     return redirect(url_for('routes.home'))
@@ -152,7 +203,7 @@ def edit_profile():
         current_user.name = request.form.get('username')
         current_user.email = request.form.get('email')
         current_user.bio = request.form.get('bio')
-        
+
         # Handle profile image upload
         profile_image = request.files.get('profile_image')
         if profile_image and profile_image.filename:
@@ -170,6 +221,17 @@ def edit_profile():
         # Save changes to the database
         try:
             db.session.commit()
+
+            # Sync username with Matrix (if changed)
+            matrix_token = session.get('matrix_token')
+            if matrix_token:
+                matrix_user_id = f"@{current_user.username}:matrix.org"
+                requests.put(
+                    f"{MATRIX_SERVER}/_matrix/client/r0/profile/{matrix_user_id}/displayname",
+                    headers={"Authorization": f"Bearer {matrix_token}"},
+                    json={"displayname": current_user.name}
+                )
+
             flash('Profile updated successfully!', 'success')
         except Exception as e:
             db.session.rollback()
@@ -273,12 +335,24 @@ def dashboard():
 
 from random import sample
 
+from random import choices
+
 def suggest_users_to_follow(user):
-    followed_users_ids = [followed_user.id for followed_user in user.followed_users]
-    users_to_suggest = User.query.filter(User.id.notin_(followed_users_ids)).all()
-    users_to_suggest = sorted(users_to_suggest, key=lambda u: len(u.posts), reverse=True)
-    suggested_users = sample(users_to_suggest, min(5, len(users_to_suggest)))
+    # Get the list of followed user IDs
+    followed_users_ids = [follow.followed_user_id for follow in user.followed_users]
+
+    # Get users who are NOT followed
+    if followed_users_ids:
+        users_to_suggest = User.query.filter(User.id.notin_(followed_users_ids)).all()
+    else:
+        users_to_suggest = User.query.all()
+
+    users_to_suggest = sorted(users_to_suggest, key=lambda u: len(u.posts) if u.posts else 0, reverse=True)
+
+    suggested_users = choices(users_to_suggest, k=min(5, len(users_to_suggest)))
+
     return suggested_users
+
 
 
 
@@ -1438,90 +1512,339 @@ def save_media(file):
     return None
 
 
+MATRIX_SERVER = "https://matrix.org"  # Public Matrix server
+
 @routes.route('/messages', methods=['GET', 'POST'])
 def messages():
     if 'user_id' not in session:
         return redirect(url_for('login'))
 
-    user_id = session['user_id']  # Logged-in user
+    user_id = session['user_id']
     form = MessageForm()
     users = User.query.filter(User.id != user_id).all()
     recipient_id = request.args.get('user_id', type=int)
     current_chat_user = None
     messages = []
 
+    # Use the stored Matrix token from session
+    access_token = session.get('matrix_token')
+    if not access_token:
+        flash("You need to log in again.", "error")
+        return redirect(url_for('login'))
+
     if recipient_id:
         current_chat_user = User.query.get(recipient_id)
-        messages = Message.query.filter(
-            ((Message.sender_id == user_id) & (Message.recipient_id == recipient_id)) |
-            ((Message.sender_id == recipient_id) & (Message.recipient_id == user_id))
-        ).order_by(Message.timestamp).all()
 
-    # Handle message submission
-    if form.validate_on_submit():
-        flash("Recipient not selected.", "error")
-        if not recipient_id:
-            return redirect(url_for('messages'))  # Ensure recipient is selected
-        
-        # Get content and optional media
-        content = form.content.data
-        media_url = save_media(form.media.data) if form.media.data else None
+        # Generate a unique DM room
+        room_id = get_or_create_dm_room(user_id, recipient_id, access_token)
 
-        # Create and save the new message
-        new_message = Message(
-            sender_id=user_id,
-            recipient_id=recipient_id,
-            content=content,
-            media_url=media_url
+        if not room_id:
+            flash("Could not join or create chat room.", "error")
+            return redirect(url_for('messages'))
+
+        # Ensure the user joins the room
+        requests.post(
+            f"{MATRIX_SERVER}/_matrix/client/r0/rooms/{room_id}/join",
+            headers={"Authorization": f"Bearer {access_token}"}
         )
-        try:
-            db.session.add(new_message)
-            db.session.commit()
-        except Exception as e:
-            db.session.rollback()
-            current_app.logger.error(f"Error saving message: {e}")
-            flash("Message could not be sent. Please try again.", "error")
 
+        # Get message history
+        messages_response = requests.get(
+            f"{MATRIX_SERVER}/_matrix/client/r0/rooms/{room_id}/messages",
+            headers={"Authorization": f"Bearer {access_token}"}
+        )
+        if messages_response.status_code == 200:
+            messages = messages_response.json().get("chunk", [])
 
-        # Notify the recipient via Redis
-        redis_client = current_app.redis_client  # Access Redis client from the app context
-        redis_client.publish(f'chat:{recipient_id}', {
-            'sender_id': user_id,
-            'content': content,
-            'media_url': media_url
-        })
+    # Handle sending messages
+    if form.validate_on_submit():
+        if not recipient_id:
+            flash("Recipient not selected.", "error")
+            return redirect(url_for('messages'))
 
-        # Notify the recipient via WebSocket
-        socketio.emit('new_message', {
-            'sender_id': user_id,
-            'recipient_id': recipient_id,
-            'content': content,
-            'media_url': media_url
-        }, room=f'chat:{recipient_id}')
+        content = form.content.data
 
-        # Redirect back to the same chat
+        # Send message to Matrix
+        send_response = requests.post(
+            f"{MATRIX_SERVER}/_matrix/client/r0/rooms/{room_id}/send/m.room.message",
+            headers={"Authorization": f"Bearer {access_token}"},
+            json={"msgtype": "m.text", "body": content}
+        )
+
+        if send_response.status_code == 200:
+            flash("Message sent successfully!", "success")
+        else:
+            flash("Message could not be sent.", "error")
+
         return redirect(url_for('messages', user_id=recipient_id))
 
-    # Render the messages template
     return render_template(
         'messages.html',
         form=form,
         users=users,
         messages=messages,
         current_chat_user=current_chat_user
+
     )
 
+def get_or_create_dm_room(user1, user2, access_token):
+    """
+    Get or create a direct message room for two users.
+    """
+    room_alias = f"dm_{min(user1, user2)}_{max(user1, user2)}"
+    room_alias_full = f"#{room_alias}:matrix.org"
 
-@socketio.on('join')
-def on_join(data):
-    room = f"chat:{data['user_id']}"
-    join_room(room)
-    emit('message', {'msg': 'You joined the room'}, room=room)
+    # Check if the room already exists
+    response = requests.get(
+        f"{MATRIX_SERVER}/_matrix/client/r0/directory/room/{room_alias_full}",
+        headers={"Authorization": f"Bearer {access_token}"}
+    )
 
-@socketio.on('send_message')
-def handle_message(data):
-    room = f"chat:{data['recipient_id']}"
-    emit('message', data, room=room)
+    if response.status_code == 200:
+        return response.json().get("room_id")
+
+    # Create a new room if it doesn’t exist
+    create_response = requests.post(
+        f"{MATRIX_SERVER}/_matrix/client/r0/createRoom",
+        headers={"Authorization": f"Bearer {access_token}"},
+        json={"room_alias_name": room_alias, "preset": "trusted_private_chat", "invite": [f"@{user2}:matrix.org"]}
+    )
+
+    if create_response.status_code == 200:
+        return create_response.json().get("room_id")
+
+    return None
+
+def send_direct_message(sender, recipient, content, access_token):
+    """
+    Send a direct Matrix message (to-device messaging).
+    """
+    response = requests.put(
+        f"{MATRIX_SERVER}/_matrix/client/r0/sendToDevice/m.room.message/{int(time.time())}",
+        headers={"Authorization": f"Bearer {access_token}"},
+        json={
+            "messages": {
+                f"@{recipient}:matrix.org": {
+                    "*": {  # Wildcard for all recipient devices
+                        "msgtype": "m.text",
+                        "body": content
+                    }
+                }
+            }
+        }
+    )
+    return response.json()
+
+@routes.route('/matrix/read/<room_id>/<event_id>', methods=['POST'])
+def mark_as_read(room_id, event_id):
+    """
+    Mark a message as read in Matrix.
+    """
+    if 'matrix_token' not in session:
+        return {"error": "Unauthorized"}, 403
+
+    response = requests.post(
+        f"{MATRIX_SERVER}/_matrix/client/r0/rooms/{room_id}/receipt/m.read/{event_id}",
+        headers={"Authorization": f"Bearer {session['matrix_token']}"}
+    )
+
+    return response.json(), response.status_code
+
+@routes.route('/matrix/typing/<room_id>', methods=['POST'])
+def typing_status(room_id):
+    """
+    Update typing status in a Matrix room.
+    """
+    if 'matrix_token' not in session:
+        return {"error": "Unauthorized"}, 403
+
+    data = request.json
+    typing = data.get("typing", False)
+    matrix_user_id = session.get('matrix_user_id')
+
+    if not matrix_user_id:
+        return {"error": "Matrix user ID missing"}, 400
+
+    response = requests.put(
+        f"{MATRIX_SERVER}/_matrix/client/r0/rooms/{room_id}/typing/{matrix_user_id}",
+        headers={"Authorization": f"Bearer {session['matrix_token']}"},
+        json={"timeout": 3000 if typing else 0}  # 3s timeout
+    )
+
+    return response.json(), response.status_code
+
+
+#======================================================GROUP===============================================
+MATRIX_SERVER = "https://matrix.org"  # Public Matrix server
+
+@routes.route('/matrix/group_chat/<group_id>', methods=['GET'])
+def group_chat(group_id):
+    """
+    Fetch messages for a group chat.
+    """
+    if 'matrix_token' not in session:
+        return {"error": "Unauthorized"}, 403
+
+    access_token = session['matrix_token']
+    room_id = get_or_create_group_room(group_id, access_token)
+
+    if not room_id:
+        return {"error": "Group chat room not found"}, 404
+
+    response = requests.get(
+        f"{MATRIX_SERVER}/_matrix/client/r0/rooms/{room_id}/messages",
+        headers={"Authorization": f"Bearer {access_token}"}
+    )
+
+    if response.status_code == 200:
+        return response.json().get("chunk", [])
+    return {"error": "Failed to fetch messages"}, response.status_code
+
+
+@routes.route('/matrix/group_send/<group_id>', methods=['POST'])
+def send_group_message(group_id):
+    """
+    Send a message to a Matrix group room.
+    """
+    if 'matrix_token' not in session:
+        return {"error": "Unauthorized"}, 403
+
+    data = request.json
+    content = data.get("content")
+    access_token = session['matrix_token']
+    room_id = get_or_create_group_room(group_id, access_token)
+
+    if not room_id:
+        return {"error": "Group chat room not found"}, 404
+
+    response = requests.post(
+        f"{MATRIX_SERVER}/_matrix/client/r0/rooms/{room_id}/send/m.room.message",
+        headers={"Authorization": f"Bearer {access_token}"},
+        json={"msgtype": "m.text", "body": content}
+    )
+
+    return response.json(), response.status_code
+
+
+def get_or_create_group_room(group_id, access_token):
+    """
+    Get or create a Matrix room for a group chat.
+    """
+    room_alias = f"group_{group_id}"
+    room_alias_full = f"#{room_alias}:matrix.org"
+
+    response = requests.get(
+        f"{MATRIX_SERVER}/_matrix/client/r0/directory/room/{room_alias_full}",
+        headers={"Authorization": f"Bearer {access_token}"}
+    )
+
+    if response.status_code == 200:
+        return response.json().get("room_id")
+
+    create_response = requests.post(
+        f"{MATRIX_SERVER}/_matrix/client/r0/createRoom",
+        headers={"Authorization": f"Bearer {access_token}"},
+        json={"room_alias_name": room_alias, "preset": "private_chat"}
+    )
+
+    if create_response.status_code == 200:
+        return create_response.json().get("room_id")
+    
+    return None
+
+
+  
+
+@routes.route('/matrix/create_group', methods=['POST'])
+def create_group():
+    """
+    Create a new Matrix group chat.
+    """
+    if 'matrix_token' not in session:
+        return {"error": "Unauthorized"}, 403
+
+    data = request.json
+    group_name = data.get("group_name")
+    user_ids = data.get("user_ids", [])  # List of user IDs to invite
+    
+    access_token = session['matrix_token']
+    
+    create_response = requests.post(
+        f"{MATRIX_SERVER}/_matrix/client/r0/createRoom",
+        headers={"Authorization": f"Bearer {access_token}"},
+        json={
+            "name": group_name,
+            "preset": "private_chat",
+            "invite": [f"@{user}:matrix.org" for user in user_ids]
+        }
+    )
+    
+    return create_response.json(), create_response.status_code
+
+
+@routes.route('/matrix/group_add_member/<room_id>', methods=['POST'])
+def add_group_member(room_id):
+    """
+    Add a user to a Matrix group chat.
+    """
+    if 'matrix_token' not in session:
+        return {"error": "Unauthorized"}, 403
+    
+    data = request.json
+    user_id = data.get("user_id")
+    
+    access_token = session['matrix_token']
+    
+    response = requests.post(
+        f"{MATRIX_SERVER}/_matrix/client/r0/rooms/{room_id}/invite",
+        headers={"Authorization": f"Bearer {access_token}"},
+        json={"user_id": f"@{user_id}:matrix.org"}
+    )
+    
+    return response.json(), response.status_code
+
+
+@routes.route('/matrix/group_remove_member/<room_id>', methods=['POST'])
+def remove_group_member(room_id):
+    """
+    Remove a user from a Matrix group chat (Admin only).
+    """
+    if 'matrix_token' not in session:
+        return {"error": "Unauthorized"}, 403
+    
+    data = request.json
+    user_id = data.get("user_id")
+    
+    access_token = session['matrix_token']
+    
+    response = requests.post(
+        f"{MATRIX_SERVER}/_matrix/client/r0/rooms/{room_id}/kick",
+        headers={"Authorization": f"Bearer {access_token}"},
+        json={"user_id": f"@{user_id}:matrix.org"}
+    )
+    
+    return response.json(), response.status_code
+
+
+@routes.route('/matrix/group_members/<room_id>', methods=['GET'])
+def list_group_members(room_id):
+    """
+    List all members of a Matrix group chat.
+    """
+    if 'matrix_token' not in session:
+        return {"error": "Unauthorized"}, 403
+    
+    access_token = session['matrix_token']
+    
+    response = requests.get(
+        f"{MATRIX_SERVER}/_matrix/client/r0/rooms/{room_id}/members",
+        headers={"Authorization": f"Bearer {access_token}"}
+    )
+    
+    return response.json(), response.status_code
+  
+
+
     
 #----------------------------------------------ADS-------------------------------------------------------------
 

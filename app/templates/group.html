@@ -5,114 +5,84 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ group.name }}</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <script src="/static/socket.io.js"></script>
     <style>
         body {
             font-family: 'Roboto', sans-serif;
             margin: 0;
             padding: 0;
-            background-color: #f4f7fc;
+            background-color: #eef2f7;
             color: #333;
         }
-
         header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             background-color: #007BFF;
             color: white;
-            padding: 10px 20px;
+            padding: 15px 30px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
-
         header h1 {
             margin: 0;
+            font-size: 1.8em;
         }
-
-        header .actions {
-            display: flex;
-            gap: 10px;
-        }
-
-        header .actions button {
-            background-color: white;
+        .actions button {
+            background: white;
             color: #007BFF;
             border: none;
+            padding: 8px 15px;
+            margin-left: 10px;
             border-radius: 5px;
-            padding: 5px 10px;
             cursor: pointer;
+            font-weight: 500;
         }
-
         .container {
+            max-width: 800px;
+            margin: 40px auto;
+            background: white;
             padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
         }
-
-        .section {
-            margin-bottom: 30px;
+        h2 {
+            color: #007BFF;
         }
-
-        .feed, .comments {
+        .admin-tools {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+        ul {
             list-style: none;
             padding: 0;
         }
-
-        .feed li, .comments li {
-            background: white;
-            border: 1px solid #ccc;
-            border-radius: 8px;
+        ul li {
+            background: #f8f9fa;
+            padding: 12px;
             margin-bottom: 10px;
-            padding: 10px;
+            border-radius: 8px;
         }
-
-        .search {
-            margin-bottom: 20px;
-            display: flex;
-            gap: 10px;
-        }
-
-        .search input {
-            flex: 1;
+        input[type="text"] {
+            width: calc(100% - 100px);
             padding: 10px;
             border: 1px solid #ccc;
             border-radius: 5px;
+            margin-top: 10px;
         }
-
-        .search button {
-            padding: 10px;
-            background-color: #007BFF;
+        button.post-btn {
+            background: #007BFF;
             color: white;
             border: none;
+            padding: 10px 15px;
             border-radius: 5px;
             cursor: pointer;
-        }
-
-        .admin-tools {
-            border: 1px solid #ccc;
-            padding: 20px;
-            border-radius: 8px;
-            background-color: white;
-        }
-
-        .admin-tools h3 {
-            margin-top: 0;
-        }
-
-        .private-messages {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 50px;
-            height: 50px;
-            background-color: #007BFF;
-            color: white;
-            border-radius: 50%;
-            cursor: pointer;
-            font-size: 24px;
         }
     </style>
 </head>
 <body>
+    
     <header>
         <h1>{{ group.name }}</h1>
         <div class="actions">
@@ -122,27 +92,19 @@
     </header>
 
     <div class="container">
-        <!-- Group Details -->
-        <div class="section">
-            <h2>About this Group</h2>
-            <p>{{ group.rules }}</p>
-        </div>
+        <h2>About this Group</h2>
+        <p>{{ group.rules }}</p>
 
-        <!-- Admin Tools (Visible only to group owner or admins) -->
         {% if current_user.id == group.owner_id or current_user.is_admin %}
-        <div class="section admin-tools">
+        <div class="admin-tools">
             <h3>Admin Tools</h3>
             <ul>
                 {% for membership in memberships %}
                 <li>
                     {{ membership.user.username }} - {{ membership.role }}
                     {% if membership.role != 'admin' %}
-                    <button onclick="updateRole('{{ membership.user.id }}', 'admin')">Promote to Admin</button>
-                    <button onclick="updateRole('{{ membership.user.id }}', 'moderator')">Promote to Moderator</button>
-                    <button onclick="updateRole('{{ membership.user.id }}', 'member')">Demote to Member</button>
-                    <button>
-                    <li><a href="{{ url_for('routes.manage_group_members', group_id=group.id) }}">Manage Members</a></li>
-                    <li><a href="{{ url_for('routes.edit_group', group_id=group.id) }}">Edit Group Settings</a></li>
+                    <button onclick="updateRole('{{ membership.user.id }}', 'admin')">Promote</button>
+                    <button onclick="updateRole('{{ membership.user.id }}', 'member')">Demote</button>
                     {% endif %}
                 </li>
                 {% endfor %}
@@ -150,73 +112,38 @@
         </div>
         {% endif %}
 
-        <!-- Group Feed -->
-        <div class="section">
-            <h2>Group Feed</h2>
-            <div class="search">
-                <input type="text" placeholder="Search posts...">
-                <button>Search</button>
-            </div>
+        <h2>Group Feed</h2>
+        <ul id="feed">
+            {% for post in posts %}
+            <li><strong>{{ post.user.username }}</strong>: {{ post.content }}</li>
+            {% endfor %}
+        </ul>
 
-            <ul class="feed">
-                {% for post in posts %}
-                <li>
-                    <strong>{{ post.user.username }}</strong>: {{ post.content }}
-                    <div>
-                        <button onclick="likePost({{ post.id }})">Like ({{ post.likes }})</button>
-                        <button onclick="sharePost({{ post.id }})">Share</button>
-                    </div>
-
-                    <!-- Comments -->
-                    <ul class="comments">
-                        {% for comment in post.comments %}
-                        <li><strong>{{ comment.user.username }}</strong>: {{ comment.content }}</li>
-                        {% endfor %}
-                    </ul>
-
-                    <textarea placeholder="Write a comment..."></textarea>
-                    <button onclick="commentOnPost({{ post.id }})">Comment</button>
-                </li>
-                {% endfor %}
-            </ul>
-        </div>
-    </div>
-
-    <!-- Private Messaging Icon -->
-    <div class="private-messages" onclick="openMessages()">
-        💬
+        <input type="text" id="message" placeholder="Write a post...">
+        <button class="post-btn" onclick="sendMessage()">Post</button>
     </div>
 
     <script>
-        async function updateRole(userId, role) {
-            const response = await fetch(`/groups/{{ group.id }}/update_role`, {
+        const socket = io.connect("{{ request.host }}");
+
+        socket.on("new_post", function(data) {
+            const feed = document.getElementById("feed");
+            const newPost = document.createElement("li");
+            newPost.innerHTML = `<strong>${data.username}</strong>: ${data.content}`;
+            feed.appendChild(newPost);
+        });
+
+        async function sendMessage() {
+            const content = document.getElementById("message").value;
+            if (!content.trim()) return;
+            const response = await fetch(`/groups/{{ group.id }}/post`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ user_id: userId, role: role })
+                body: JSON.stringify({ content })
             });
-
             if (response.ok) {
-                alert('User role updated successfully');
-                location.reload();
-            } else {
-                alert('Error updating user role');
+                document.getElementById("message").value = "";
             }
-        }
-
-        function likePost(postId) {
-            alert('Post ' + postId + ' liked!');
-        }
-
-        function sharePost(postId) {
-            alert('Post ' + postId + ' shared!');
-        }
-
-        function commentOnPost(postId) {
-            alert('Comment added to post ' + postId + '!');
-        }
-
-        function openMessages() {
-            alert('Open private messages panel!');
         }
     </script>
 </body>
