@@ -1517,7 +1517,7 @@ MATRIX_SERVER = "https://matrix.org"  # Public Matrix server
 @routes.route('/messages', methods=['GET', 'POST'])
 def messages():
     if 'user_id' not in session:
-        return redirect(url_for('login'))
+        return redirect(url_for('routes.login'))
 
     user_id = session['user_id']
     form = MessageForm()
