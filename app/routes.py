@@ -1674,7 +1674,7 @@ def typing_status(room_id):
     return response.json(), response.status_code
 
 
-#======================================================GROUP===============================================
+#======================================================GROUP===================================================================
 MATRIX_SERVER = "https://matrix.org"  # Public Matrix server
 
 @routes.route('/matrix/group_chat/<group_id>', methods=['GET'])
@@ -1755,31 +1755,31 @@ def get_or_create_group_room(group_id, access_token):
 
   
 
-@routes.route('/matrix/create_group', methods=['POST'])
-def create_group():
-    """
-    Create a new Matrix group chat.
-    """
-    if 'matrix_token' not in session:
-        return {"error": "Unauthorized"}, 403
+# @routes.route('/matrix/create_group', methods=['POST'])
+# def create_group():
+#     """
+#     Create a new Matrix group chat.
+#     """
+#     if 'matrix_token' not in session:
+#         return {"error": "Unauthorized"}, 403
 
-    data = request.json
-    group_name = data.get("group_name")
-    user_ids = data.get("user_ids", [])  # List of user IDs to invite
+#     data = request.json
+#     group_name = data.get("group_name")
+#     user_ids = data.get("user_ids", [])  # List of user IDs to invite
     
-    access_token = session['matrix_token']
+#     access_token = session['matrix_token']
     
-    create_response = requests.post(
-        f"{MATRIX_SERVER}/_matrix/client/r0/createRoom",
-        headers={"Authorization": f"Bearer {access_token}"},
-        json={
-            "name": group_name,
-            "preset": "private_chat",
-            "invite": [f"@{user}:matrix.org" for user in user_ids]
-        }
-    )
+#     create_response = requests.post(
+#         f"{MATRIX_SERVER}/_matrix/client/r0/createRoom",
+#         headers={"Authorization": f"Bearer {access_token}"},
+#         json={
+#             "name": group_name,
+#             "preset": "private_chat",
+#             "invite": [f"@{user}:matrix.org" for user in user_ids]
+#         }
+#     )
     
-    return create_response.json(), create_response.status_code
+#     return create_response.json(), create_response.status_code
 
 
 @routes.route('/matrix/group_add_member/<room_id>', methods=['POST'])
@@ -1842,6 +1842,104 @@ def list_group_members(room_id):
     )
     
     return response.json(), response.status_code
+
+
+
+@routes.route('/groups/<groups_id>/join', methods=['POST'])
+def join_group(groups_id):
+    user_id = session.get('users_id')
+    if not user_id:
+        return jsonify({"error": "User not logged in"}), 401
+    existing_request = Membership.query.filter_by(user_id=user_id, groups_id=groups_id).first()
+    if existing_request:
+        return jsonify({"error": "Already requested or part of the group"}), 400
+    request = Membership(user_id=user_id, groups_id=groups_id, status='pending')
+    db.session.add(request)
+    db.session.commit()
+
+    return jsonify({"message": "Join request sent successfully"})
+
+@routes.route('/groups/<groups_id>/manage_request', methods=['POST'])
+def manage_request(groups_id):
+    data = request.json
+    target_user_id = data['users_id']
+    action = data['action']
+
+    # Validate admin
+    membership = Membership.query.filter_by(user_id=current_user.id, groups_id=groups_id, role='admin').first()
+    if not membership:
+        return jsonify({"error": "Unauthorized"}), 403
+
+    # Process request
+    request_membership = Membership.query.filter_by(user_id=target_user_id, groups_id=groups_id, status='pending').first()
+    if not request_membership:
+        return jsonify({"error": "Request not found"}), 404
+
+    if action == 'approve':
+        request_membership.status = 'approved'
+    elif action == 'deny':
+        request_membership.status = 'denied'
+    else:
+        return jsonify({"error": "Invalid action"}), 400
+
+    db.session.commit()
+    return jsonify({"message": f"Request {action}ed successfully"})
+
+# @routes.route('/messages', methods=['GET'])
+# def view_messages():
+#     user_id = current_user.id
+#     messages = Message.query.filter((Message.sender_id == user_id) | (Message.receiver_id == user_id)).order_by(Message.timestamp.desc()).all()
+#     return render_template('messages.html', messages=messages)
+
+# @routes.route('/messages/send', methods=['POST'])
+# def send_message():
+#     data = request.json
+#     receiver_id = data.get('receiver_id')
+#     content = data.get('content')
+
+#     if not receiver_id or not content:
+#         return jsonify({"error": "Receiver and content are required"}), 400
+
+#     message = Message(sender_id=current_user.id, receiver_id=receiver_id, content=content)
+#     db.session.add(message)
+#     db.session.commit()
+
+#     return jsonify({"message": "Message sent successfully"})
+
+
+@routes.route('/groups/<group_id>/manage_users', methods=['GET'])
+def manage_users(group_id):
+    group = Group.query.get(group_id)
+    if not group:
+        return "Group not found", 404
+
+    if not Membership.query.filter_by(user_id=current_user.id, group_id=group_id, role='admin').first():
+        return jsonify({"error": "Unauthorized"}), 403
+
+    memberships = Membership.query.filter_by(group_id=group_id).all()
+    return render_template('manage_users.html', group=group, memberships=memberships)
+
+@routes.route('/groups/<group_id>/update_role', methods=['POST'])
+def update_role(group_id):
+    data = request.json
+    user_id = data.get('users_id')
+    new_role = data.get('role')
+
+    if not Membership.query.filter_by(user_id=current_user.id, group_id=group_id, role='admin').first():
+        return jsonify({"error": "Unauthorized"}), 403
+
+    membership = Membership.query.filter_by(user_id=user_id, group_id=group_id).first()
+    if not membership:
+        return jsonify({"error": "Membership not found"}), 404
+
+    if new_role not in ['admin', 'moderator', 'member']:
+        return jsonify({"error": "Invalid role"}), 400
+
+    membership.role = new_role
+    db.session.commit()
+
+    return jsonify({"message": f"User role updated to {new_role}"})
+
   
 
 
@@ -2612,127 +2710,33 @@ def view_group(group_id):
     posts = Post.query.filter_by(group_id=group_id).all()
     return render_template('group.html', groups=groups, posts=posts)
 
-@routes.route('/groups/create', methods=['POST'])
-def create_group():
-    if 'users_id' not in session:
-        return jsonify({"error": "User not authenticated"}), 401
-    user_id = session['user_id']
-    data = request.json
-    if 'name' not in data or 'rules' not in data:
-        return jsonify({"error": "Missing required fields"}), 400
+# @routes.route('/groups/create', methods=['POST'])
+# def create_group():
+#     if 'users_id' not in session:
+#         return jsonify({"error": "User not authenticated"}), 401
+#     user_id = session['user_id']
+#     data = request.json
+#     if 'name' not in data or 'rules' not in data:
+#         return jsonify({"error": "Missing required fields"}), 400
 
-    try:
-        groups = Group(name=data['name'], rules=data['rules'], owner_id=user_id)
-        db.session.add(groups)
-        db.session.commit()
+#     try:
+#         groups = Group(name=data['name'], rules=data['rules'], owner_id=user_id)
+#         db.session.add(groups)
+#         db.session.commit()
 
-        # Add the user as admin in the Membership table
-        membership = Membership(user_id=user_id, groups_id=groups.id, status='approved', role='admin')
-        db.session.add(membership)
-        db.session.commit()
+#         # Add the user as admin in the Membership table
+#         membership = Membership(user_id=user_id, groups_id=groups.id, status='approved', role='admin')
+#         db.session.add(membership)
+#         db.session.commit()
 
-        # Return a success response
-        return jsonify({"message": "Group created successfully", "redirect_url": url_for('routes.view_group', group_id=groups.id)})
+#         # Return a success response
+#         return jsonify({"message": "Group created successfully", "redirect_url": url_for('routes.view_group', group_id=groups.id)})
 
-    except Exception as e:
-        # Log the exception for debugging
-        app.logger.error(f"Error creating group: {str(e)}")
-        return jsonify({"error": "Failed to create group"}), 500
+#     except Exception as e:
+#         # Log the exception for debugging
+#         app.logger.error(f"Error creating group: {str(e)}")
+#         return jsonify({"error": "Failed to create group"}), 500
     
-@routes.route('/groups/<groups_id>/join', methods=['POST'])
-def join_group(groups_id):
-    user_id = session.get('users_id')
-    if not user_id:
-        return jsonify({"error": "User not logged in"}), 401
-    existing_request = Membership.query.filter_by(user_id=user_id, groups_id=groups_id).first()
-    if existing_request:
-        return jsonify({"error": "Already requested or part of the group"}), 400
-    request = Membership(user_id=user_id, groups_id=groups_id, status='pending')
-    db.session.add(request)
-    db.session.commit()
-
-    return jsonify({"message": "Join request sent successfully"})
-
-@routes.route('/groups/<groups_id>/manage_request', methods=['POST'])
-def manage_request(groups_id):
-    data = request.json
-    target_user_id = data['users_id']
-    action = data['action']
-
-    # Validate admin
-    membership = Membership.query.filter_by(user_id=current_user.id, groups_id=groups_id, role='admin').first()
-    if not membership:
-        return jsonify({"error": "Unauthorized"}), 403
-
-    # Process request
-    request_membership = Membership.query.filter_by(user_id=target_user_id, groups_id=groups_id, status='pending').first()
-    if not request_membership:
-        return jsonify({"error": "Request not found"}), 404
-
-    if action == 'approve':
-        request_membership.status = 'approved'
-    elif action == 'deny':
-        request_membership.status = 'denied'
-    else:
-        return jsonify({"error": "Invalid action"}), 400
-
-    db.session.commit()
-    return jsonify({"message": f"Request {action}ed successfully"})
-
-@routes.route('/messages', methods=['GET'])
-def view_messages():
-    user_id = current_user.id
-    messages = Message.query.filter((Message.sender_id == user_id) | (Message.receiver_id == user_id)).order_by(Message.timestamp.desc()).all()
-    return render_template('messages.html', messages=messages)
-
-@routes.route('/messages/send', methods=['POST'])
-def send_message():
-    data = request.json
-    receiver_id = data.get('receiver_id')
-    content = data.get('content')
-
-    if not receiver_id or not content:
-        return jsonify({"error": "Receiver and content are required"}), 400
-
-    message = Message(sender_id=current_user.id, receiver_id=receiver_id, content=content)
-    db.session.add(message)
-    db.session.commit()
-
-    return jsonify({"message": "Message sent successfully"})
-
-
-@routes.route('/groups/<group_id>/manage_users', methods=['GET'])
-def manage_users(group_id):
-    group = Group.query.get(group_id)
-    if not group:
-        return "Group not found", 404
-
-    if not Membership.query.filter_by(user_id=current_user.id, group_id=group_id, role='admin').first():
-        return jsonify({"error": "Unauthorized"}), 403
-
-    memberships = Membership.query.filter_by(group_id=group_id).all()
-    return render_template('manage_users.html', group=group, memberships=memberships)
-
-@routes.route('/groups/<group_id>/update_role', methods=['POST'])
-def update_role(group_id):
-    data = request.json
-    user_id = data.get('users_id')
-    new_role = data.get('role')
-
-    if not Membership.query.filter_by(user_id=current_user.id, group_id=group_id, role='admin').first():
-        return jsonify({"error": "Unauthorized"}), 403
-
-    membership = Membership.query.filter_by(user_id=user_id, group_id=group_id).first()
-    if not membership:
-        return jsonify({"error": "Membership not found"}), 404
-
-    if new_role not in ['admin', 'moderator', 'member']:
-        return jsonify({"error": "Invalid role"}), 400
-
-    membership.role = new_role
-    db.session.commit()
-
-    return jsonify({"message": f"User role updated to {new_role}"})
 
 
 #__________________________________________________STARTUP TOOLKIT_____________________________________________
