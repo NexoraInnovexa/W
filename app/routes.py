@@ -1530,7 +1530,7 @@ def messages():
     access_token = session.get('matrix_token')
     if not access_token:
         flash("You need to log in again.", "error")
-        return redirect(url_for('login'))
+        return redirect(url_for('routes.login'))
 
     if recipient_id:
         current_chat_user = User.query.get(recipient_id)
@@ -1540,7 +1540,7 @@ def messages():
 
         if not room_id:
             flash("Could not join or create chat room.", "error")
-            return redirect(url_for('messages'))
+            return redirect(url_for('routes.messages'))
 
         # Ensure the user joins the room
         requests.post(
@@ -1560,7 +1560,7 @@ def messages():
     if form.validate_on_submit():
         if not recipient_id:
             flash("Recipient not selected.", "error")
-            return redirect(url_for('messages'))
+            return redirect(url_for('routes.messages'))
 
         content = form.content.data
 
@@ -1576,7 +1576,7 @@ def messages():
         else:
             flash("Message could not be sent.", "error")
 
-        return redirect(url_for('messages', user_id=recipient_id))
+        return redirect(url_for('routes.messages', user_id=recipient_id))
 
     return render_template(
         'messages.html',
