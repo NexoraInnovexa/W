@@ -95,7 +95,7 @@ def create_app():
 
     app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv(
         'POSTGRES_URI', 
-        'postgresql://football_db_45ja_user:FcSz0jnwqUujnD1o1ZmWBaMEMP22RuiO@dpg-cv88815ds78s73e900hg-a/football_db_45ja'
+        'postgresql://nexora_7mum_user:w1inTuMkrzAyieYe0tqVvYiRXzYhExLJ@dpg-d0lfdll6ubrc73c1p3ag-a/nexora_7mum'
     )
 
     # Debugging: Log the database URI
