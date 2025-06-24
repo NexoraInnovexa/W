@@ -79,7 +79,7 @@ def create_app():
 
     # Dynamically switch database based on environment
     # if os.getenv("RENDER") == "true":
-    #     app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('POSTGRES_URI', 'postgresql://football_db_45ja_user:FcSz0jnwqUujnD1o1ZmWBaMEMP22RuiO@dpg-cv88815ds78s73e900hg-a/football_db_45ja')
+    #     app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('POSTGRES_URI', 'postgresql://wink_user:5921VGwoOKPU9wzdUcHjZ239svRyL8u8@dpg-d1d7ff7diees73cjrts0-a/wink')
     # else:
     #     app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv(
     #         'LOCAL_POSTGRES_URI',  # Local Database
@@ -95,7 +95,7 @@ def create_app():
 
     app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv(
         'POSTGRES_URI', 
-        'postgresql://nexora_7mum_user:w1inTuMkrzAyieYe0tqVvYiRXzYhExLJ@dpg-d0lfdll6ubrc73c1p3ag-a/nexora_7mum'
+        'postgresql://wink_user:5921VGwoOKPU9wzdUcHjZ239svRyL8u8@dpg-d1d7ff7diees73cjrts0-a/wink'
     )
 
     # Debugging: Log the database URI
